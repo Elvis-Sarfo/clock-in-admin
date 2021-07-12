@@ -1,7 +1,6 @@
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-
-import '../../../constants.dart';
 
 class Chart extends StatelessWidget {
   const Chart({
@@ -26,7 +25,7 @@ class Chart extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: defaultPadding),
+                SizedBox(height: Styles.defaultPadding),
                 Text(
                   "29.1",
                   style: Theme.of(context).textTheme.headline4!.copyWith(
@@ -47,7 +46,7 @@ class Chart extends StatelessWidget {
 
 List<PieChartSectionData> paiChartSelectionDatas = [
   PieChartSectionData(
-    color: primaryColor,
+    color: Styles.primaryColor,
     value: 25,
     showTitle: false,
     radius: 25,
@@ -71,7 +70,7 @@ List<PieChartSectionData> paiChartSelectionDatas = [
     radius: 16,
   ),
   PieChartSectionData(
-    color: primaryColor.withOpacity(0.1),
+    color: Styles.primaryColor.withOpacity(0.1),
     value: 25,
     showTitle: false,
     radius: 13,

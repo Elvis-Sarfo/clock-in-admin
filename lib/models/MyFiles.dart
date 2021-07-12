@@ -1,4 +1,4 @@
-import 'package:clock_in_admin/constants.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 
 class CloudStorageInfo {
@@ -21,7 +21,7 @@ List demoMyFiels = [
     numOfFiels: 1328,
     svgSrc: "assets/icons/Documents.svg",
     totalStorage: "1.9GB",
-    color: primaryColor,
+    color: Styles.primaryColor,
     percentage: 35,
   ),
   CloudStorageInfo(
@@ -29,7 +29,7 @@ List demoMyFiels = [
     numOfFiels: 1328,
     svgSrc: "assets/icons/Documents.svg",
     totalStorage: "1.9GB",
-    color: primaryColor,
+    color: Styles.primaryColor,
     percentage: 35,
   ),
   CloudStorageInfo(
@@ -47,13 +47,5 @@ List demoMyFiels = [
     totalStorage: "1GB",
     color: Color(0xFFA4CDFF),
     percentage: 10,
-  ),
-  CloudStorageInfo(
-    title: "Documents",
-    numOfFiels: 5328,
-    svgSrc: "assets/icons/drop_box.svg",
-    totalStorage: "7.3GB",
-    color: Color(0xFF007EE5),
-    percentage: 78,
   ),
 ];

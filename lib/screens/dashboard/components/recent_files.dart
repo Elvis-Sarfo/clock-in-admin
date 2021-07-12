@@ -1,8 +1,7 @@
 import 'package:clock_in_admin/models/RecentFile.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
-import '../../../constants.dart';
 
 class RecentFiles extends StatelessWidget {
   const RecentFiles({
@@ -12,9 +11,9 @@ class RecentFiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(defaultPadding),
+      padding: EdgeInsets.all(Styles.defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: Styles.secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -28,7 +27,7 @@ class RecentFiles extends StatelessWidget {
             width: double.infinity,
             child: DataTable(
               horizontalMargin: 0,
-              columnSpacing: defaultPadding,
+              columnSpacing: Styles.defaultPadding,
               columns: [
                 DataColumn(
                   label: Text("File Name"),
@@ -64,7 +63,8 @@ DataRow recentFileDataRow(RecentFile fileInfo) {
               width: 30,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: Styles.defaultPadding),
               child: Text(fileInfo.title),
             ),
           ],

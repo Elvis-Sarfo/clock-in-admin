@@ -1,8 +1,7 @@
 import 'package:clock_in_admin/models/MyFiles.dart';
 import 'package:clock_in_admin/responsive.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
-
-import '../../../constants.dart';
 import 'file_info_card.dart';
 
 class MyFiels extends StatelessWidget {
@@ -25,9 +24,9 @@ class MyFiels extends StatelessWidget {
             ElevatedButton.icon(
               style: TextButton.styleFrom(
                 padding: EdgeInsets.symmetric(
-                  horizontal: defaultPadding * 1.5,
-                  vertical:
-                      defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
+                  horizontal: Styles.defaultPadding * 1.5,
+                  vertical: Styles.defaultPadding /
+                      (Responsive.isMobile(context) ? 2 : 1),
                 ),
               ),
               onPressed: () {},
@@ -36,7 +35,7 @@ class MyFiels extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: defaultPadding),
+        SizedBox(height: Styles.defaultPadding),
         Responsive(
           mobile: FileInfoCardGridView(
             crossAxisCount: _size.width < 650 ? 2 : 4,
@@ -70,8 +69,8 @@ class FileInfoCardGridView extends StatelessWidget {
       itemCount: demoMyFiels.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        crossAxisSpacing: defaultPadding,
-        mainAxisSpacing: defaultPadding,
+        crossAxisSpacing: Styles.defaultPadding,
+        mainAxisSpacing: Styles.defaultPadding,
         childAspectRatio: childAspectRatio,
       ),
       itemBuilder: (context, index) => FileInfoCard(info: demoMyFiels[index]),

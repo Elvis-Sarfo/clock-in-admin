@@ -1,8 +1,7 @@
 import 'package:clock_in_admin/models/MyFiles.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../constants.dart';
 
 class FileInfoCard extends StatelessWidget {
   const FileInfoCard({
@@ -15,9 +14,9 @@ class FileInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(defaultPadding),
+      padding: EdgeInsets.all(Styles.defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: Styles.secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -28,7 +27,7 @@ class FileInfoCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: EdgeInsets.all(defaultPadding * 0.75),
+                padding: EdgeInsets.all(Styles.defaultPadding * 0.75),
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
@@ -80,7 +79,7 @@ class FileInfoCard extends StatelessWidget {
 class ProgressLine extends StatelessWidget {
   const ProgressLine({
     Key? key,
-    this.color = primaryColor,
+    this.color = Styles.primaryColor,
     required this.percentage,
   }) : super(key: key);
 

@@ -1,7 +1,7 @@
-import 'package:clock_in_admin/constants.dart';
 import 'package:clock_in_admin/controllers/menu_controller.dart';
 import 'package:clock_in_admin/controllers/page_route_controller.dart';
 import 'package:clock_in_admin/responsive.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,7 @@ class Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(defaultPadding),
+      padding: EdgeInsets.all(Styles.defaultPadding),
       child: Row(
         children: [
           if (!Responsive.isDesktop(context))
@@ -45,13 +45,13 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: defaultPadding),
+      margin: EdgeInsets.only(left: Styles.defaultPadding),
       padding: EdgeInsets.symmetric(
-        horizontal: defaultPadding,
-        vertical: defaultPadding / 2,
+        horizontal: Styles.defaultPadding,
+        vertical: Styles.defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: Styles.secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(color: Colors.white10),
       ),
@@ -67,8 +67,8 @@ class ProfileCard extends StatelessWidget {
           ),
           if (!Responsive.isMobile(context))
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: Styles.defaultPadding / 2),
               child: Text("Angelina Joli"),
             ),
           Icon(Icons.keyboard_arrow_down),
@@ -88,7 +88,7 @@ class SearchField extends StatelessWidget {
     return TextField(
       decoration: InputDecoration(
         hintText: "Search",
-        fillColor: secondaryColor,
+        fillColor: Styles.secondaryColor,
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
@@ -97,10 +97,10 @@ class SearchField extends StatelessWidget {
         suffixIcon: InkWell(
           onTap: () {},
           child: Container(
-            padding: EdgeInsets.all(defaultPadding * 0.75),
-            margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+            padding: EdgeInsets.all(Styles.defaultPadding * 0.75),
+            margin: EdgeInsets.symmetric(horizontal: Styles.defaultPadding / 2),
             decoration: BoxDecoration(
-              color: primaryColor,
+              color: Styles.primaryColor,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
             child: SvgPicture.asset("assets/icons/Search.svg"),

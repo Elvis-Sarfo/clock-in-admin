@@ -1,7 +1,6 @@
 import 'package:clock_in_admin/controllers/menu_controller.dart';
 import 'package:clock_in_admin/controllers/page_route_controller.dart';
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +32,9 @@ class MainScreen extends StatelessWidget {
                   Header(),
                   Expanded(
                     child: context.watch<PageRouteController>().route,
+                    // child: Consumer<PageRouteController>(
+                    //   builder: (context, pageRoute, child) => pageRoute.route,
+                    // ),
                   ),
                 ],
               ),
