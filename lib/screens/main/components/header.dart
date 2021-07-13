@@ -15,6 +15,17 @@ class Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(Styles.defaultPadding),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(1, 4),
+            spreadRadius: 1.0,
+            color: Styles.primaryColor.withOpacity(0.10),
+            blurRadius: 20.0,
+          ),
+        ],
+      ),
       child: Row(
         children: [
           if (!Responsive.isDesktop(context))
@@ -24,7 +35,7 @@ class Header extends StatelessWidget {
             ),
           Text(
             context.watch<PageRouteController>().pageTitle,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.headline4,
           ),
           // if (!Responsive.isMobile(context))
           //   Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
@@ -51,9 +62,9 @@ class ProfileCard extends StatelessWidget {
         vertical: Styles.defaultPadding / 2,
       ),
       decoration: BoxDecoration(
-        color: Styles.secondaryColor,
+        color: Colors.white,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        border: Border.all(color: Colors.white10),
+        border: Styles.border,
       ),
       child: Row(
         children: [
@@ -64,6 +75,7 @@ class ProfileCard extends StatelessWidget {
           Icon(
             Icons.person,
             size: 28,
+            color: Colors.black87,
           ),
           if (!Responsive.isMobile(context))
             Padding(
@@ -71,7 +83,11 @@ class ProfileCard extends StatelessWidget {
                   horizontal: Styles.defaultPadding / 2),
               child: Text("Angelina Joli"),
             ),
-          Icon(Icons.keyboard_arrow_down),
+          Icon(
+            Icons.keyboard_arrow_down,
+            color: Colors.black87,
+            size: 24,
+          ),
         ],
       ),
     );

@@ -14,20 +14,19 @@ class TeachersTable extends StatelessWidget {
   Widget build(BuildContext context) {
     // var size = MediaQuery.of(context).size;
     return Container(
-      padding:
-          EdgeInsets.symmetric(horizontal: Styles.defaultPadding, vertical: 0),
-      decoration: BoxDecoration(
-        color: Styles.secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      padding: EdgeInsets.symmetric(
+        horizontal: Styles.defaultPadding,
+        vertical: 0,
       ),
+      decoration: Styles.cardDecoration,
       child: SizedBox(
         width: double.infinity,
         child: Theme(
           data: ThemeData(
-            colorScheme: ColorScheme.dark(),
-            textTheme: TextTheme(bodyText1: TextStyle(color: Colors.white)),
+            colorScheme: ColorScheme.light(),
+            textTheme: TextTheme(bodyText1: TextStyle(color: Colors.black87)),
             cardTheme: CardTheme(
-              color: Styles.secondaryColor,
+              color: Colors.white,
               elevation: 0.0,
               shadowColor: Colors.transparent,
             ),
@@ -38,7 +37,7 @@ class TeachersTable extends StatelessWidget {
               children: [
                 Text(
                   "List of teachers",
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
                 ElevatedButton.icon(
                   style: TextButton.styleFrom(

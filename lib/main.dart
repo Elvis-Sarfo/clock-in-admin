@@ -18,11 +18,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Clockin Admin',
       theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Styles.backgroundColor,
-          textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-              .apply(bodyColor: Colors.white),
-          canvasColor: Styles.secondaryColor,
-          cardTheme: CardTheme(color: Styles.secondaryColor)),
+        scaffoldBackgroundColor: Styles.backgroundColor,
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+            .apply(bodyColor: Colors.black87),
+        canvasColor: Styles.primaryColor,
+        cardTheme: CardTheme(color: Styles.secondaryColor),
+      ),
       home: MultiProvider(
         providers: [
           ChangeNotifierProvider<MenuController>(

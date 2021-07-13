@@ -12,25 +12,20 @@ class TeacherScreenMetaInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(Styles.defaultPadding),
-      decoration: BoxDecoration(
-        color: Styles.secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
+      decoration: Styles.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Summary",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(context).textTheme.headline6,
           ),
           SizedBox(height: Styles.defaultPadding),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               style: TextButton.styleFrom(
+                backgroundColor: Styles.complementaryColor,
                 padding: EdgeInsets.symmetric(
                   horizontal: Styles.defaultPadding * 1.5,
                   vertical: Styles.defaultPadding /
@@ -39,7 +34,9 @@ class TeacherScreenMetaInfo extends StatelessWidget {
               ),
               onPressed: () {
                 showDialog(
-                    context: context, builder: (context) => AddTeacherDialog());
+                  context: context,
+                  builder: (context) => AddTeacherDialog(),
+                );
               },
               icon: Icon(Icons.add),
               label: Text("Add New"),

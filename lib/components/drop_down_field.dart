@@ -2,18 +2,26 @@ import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 
 class DropDownField extends StatelessWidget {
-  const DropDownField(
-      {Key? key, this.prefixIcon, this.suffixIcon, this.hintText})
-      : super(key: key);
   final Widget? prefixIcon, suffixIcon;
   final String? hintText;
+  final String? Function(String? value)? onChange, onSaved;
+
+  const DropDownField(
+      {Key? key,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.hintText,
+      this.onChange,
+      this.onSaved})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: DropdownButtonFormField(
         value: 'One',
-        onChanged: (value) {},
-        onSaved: (value) {},
+        onChanged: onChange ?? (value) {},
+        onSaved: onSaved ?? (value) {},
         hint: Text(
           'choose one',
         ),

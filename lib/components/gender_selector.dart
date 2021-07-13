@@ -42,13 +42,13 @@ class _GenderSelectorState extends State<GenderSelector> {
       ),
       decoration: BoxDecoration(
           color: Styles.primaryColor.withOpacity(0.1),
-          border: Border.all(width: 1, color: Colors.grey),
+          border: Styles.border,
           borderRadius: BorderRadius.all(Radius.circular(5))),
       child: Row(
         children: [
           Icon(
             Icons.wc,
-            color: Colors.grey,
+            color: Colors.black54,
           ),
           SizedBox(
             width: 8,
@@ -56,7 +56,7 @@ class _GenderSelectorState extends State<GenderSelector> {
           Text(
             'Gender ',
             style: TextStyle(
-              color: Colors.grey[600],
+              color: Colors.black54,
               fontWeight: FontWeight.w400,
             ),
           ),

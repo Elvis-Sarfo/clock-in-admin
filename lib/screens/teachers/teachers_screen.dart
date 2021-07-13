@@ -20,9 +20,13 @@ class TeachersScreen extends StatelessWidget {
                   flex: 5,
                   child: Column(
                     children: [
+                      // Table to display the list of teachers in a table
+                      // This widget will be in the tree always
                       TeachersTable(),
+                      // Leave a space between the table and the next widget if the screen is in mobile mode or size
                       if (Responsive.isMobile(context))
                         SizedBox(height: Styles.defaultPadding),
+                      // Add the MetaInfo widget to the column if the device is a mobile
                       if (Responsive.isMobile(context))
                         TeacherScreenMetaInfo(
                           key: null,

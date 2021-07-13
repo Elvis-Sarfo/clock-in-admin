@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatelessWidget {
   final Widget? prefixIcon, suffixIcon;
   final String? hintText;
+  FocusNode? focusNode;
   final int? maxLines, minLines;
   final TextEditingController? controller;
   final TextInputType? type;
@@ -22,6 +23,7 @@ class CustomTextFormField extends StatelessWidget {
     this.type,
     this.maxLines = 1,
     this.minLines = 1,
+    this.focusNode,
     this.isPasswordFeild = false,
   }) : super(key: key);
 
@@ -40,18 +42,39 @@ class CustomTextFormField extends StatelessWidget {
         onSaved: onSaved ?? (value) {},
         keyboardType: type,
         maxLines: maxLines,
+        focusNode: focusNode,
         obscureText: isPasswordFeild ?? false,
         minLines: minLines,
         decoration: InputDecoration(
+          hintStyle: TextStyle(color: Colors.black54),
           prefixIcon: prefixIcon,
           filled: true,
           suffixIcon: suffixIcon,
           fillColor: Styles.primaryColor.withOpacity(0.1),
-          focusColor: Styles.primaryColor.withOpacity(0.2),
+          focusColor: Styles.primaryColor.withOpacity(0.5),
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              width: 2,
+              color: Styles.primaryColor.withOpacity(0.50),
+            ),
           ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              width: 2,
+              color: Styles.primaryColor.withOpacity(0.20),
+            ),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              width: 2,
+              color: Colors.red.withOpacity(0.20),
+            ),
+          ),
+          // border: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(5),
+          //   borderSide: BorderSide(color: Colors.red, width: 5.0),
+          // ),
           hintText: hintText != null ? hintText : '',
         ),
       ),
