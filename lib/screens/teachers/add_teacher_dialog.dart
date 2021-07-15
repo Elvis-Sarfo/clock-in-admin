@@ -5,15 +5,46 @@ import 'package:clock_in_admin/components/gender_selector.dart';
 import 'package:clock_in_admin/components/image_chooser.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/responsive.dart';
+import 'package:clock_in_admin/services/auth_services.dart';
+import 'package:clock_in_admin/services/database_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/form_validator.dart';
 import 'package:flutter/material.dart';
 
-class AddTeacherDialog extends StatelessWidget {
+class AddTeacherDialog extends StatefulWidget {
   AddTeacherDialog({Key? key}) : super(key: key);
+
+  @override
+  _AddTeacherDialogState createState() => _AddTeacherDialogState();
+}
+
+class _AddTeacherDialogState extends State<AddTeacherDialog> {
+  // Get a global key for the form
   final _formKey = GlobalKey<FormState>();
+
+  // Instanciate a new Teacher
   final Teacher _teacher = new Teacher();
 
+  /// The Error msg that will be shown to the user if there are any error whilst
+  /// Performing any operation on the data
+  String errMsg = '';
+
+  /// Profile Image, holds the image that will be selected by the user
+  var profileImage;
+
+  /// Error Message tracker
+  ///
+  /// It is set to [false] when the the error msg is not shown
+  /// and [true] when the error msg is shown or displayed
+  bool showErrorMsg = false;
+
+  /// Tracks the operations in this widget
+  ///
+  /// It is set to [false] when there is no operation in progress
+  /// and [true] when there is an operation in progress
+  bool isLoading = false;
+
+  // Group the like form fields
   final _fieldGroupBuilder = (Teacher model) => [
         CustomTextFormField(
           prefixIcon: Icon(
@@ -95,7 +126,7 @@ class AddTeacherDialog extends StatelessWidget {
                     children: [
                       ImageChooser(
                         onImageSelected: (image) async {
-                          // profileImage = image;
+                          profileImage = image;
                         },
                       ),
                       SizedBox(
@@ -108,7 +139,9 @@ class AddTeacherDialog extends StatelessWidget {
                     ],
                   ),
                 if (!Responsive.isDesktop(context))
-                  ImageChooser(onImageSelected: (image) async {}),
+                  ImageChooser(onImageSelected: (image) async {
+                    profileImage = image;
+                  }),
                 if (!Responsive.isDesktop(context)) SizedBox(height: 10),
                 if (!Responsive.isDesktop(context))
                   ..._fieldGroupBuilder(_teacher),
@@ -118,6 +151,7 @@ class AddTeacherDialog extends StatelessWidget {
                   onChanged: (value) => _teacher.gender = value,
                   onSaved: (value) => _teacher.gender = value,
                 ),
+                AutocompleteBasicExample(),
                 SizedBox(
                   height: 10,
                 ),
@@ -174,7 +208,7 @@ class AddTeacherDialog extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                AutocompleteBasicExample(),
+
                 SizedBox(
                   height: 10,
                 ),
@@ -198,9 +232,52 @@ class AddTeacherDialog extends StatelessWidget {
     );
   }
 
+  /// Saves the data in the database
   saveTeacherinDB() async {
-    _formKey.currentState!.save();
-    print(_teacher.toMap());
+    // TOdo: Might add this task to the contoller of provider
+    // todo: Add a layer to cover the dialog and show progress of the task
+    // _formKey.currentState!.save();
+    // print(_teacher.toMap());
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+        showErrorMsg = false;
+      });
+
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+
+        var authResult = await Auth.signUpWithEmailandPassword(
+          email: _teacher.email,
+          password: _teacher.staffId,
+        );
+        print(authResult);
+        // todo: Check if the user is signed up first before you continue the next task
+        var result = await FirestoreDB.addDocWithId(
+            'teachers', _teacher.toMap(), _teacher.staffId);
+        // todo: after saving the image, update the user feild
+        if (result != 'saved') {
+          var imageUrl = (profileImage != null)
+              ? await FirestoreDB.saveFile(profileImage, '/farmers/',
+                  _teacher.fullName()!.replaceAll(' ', '_'))
+              : null;
+          setState(() {
+            isLoading = false;
+            if (result != 'saved') {
+              errMsg = result;
+              showErrorMsg = true;
+            }
+          });
+        } else {
+          Navigator.of(context).pop();
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+          showErrorMsg = false;
+        });
+      }
+    }
   }
 
   _onImageSeleceted() {}

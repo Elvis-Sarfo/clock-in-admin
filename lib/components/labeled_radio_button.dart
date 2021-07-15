@@ -30,6 +30,13 @@ class LabeledRadioButton extends StatelessWidget {
               groupValue: groupValue,
               value: value!,
               activeColor: Styles.primaryColor,
+              focusColor: Styles.primaryColor,
+              fillColor: MaterialStateColor.resolveWith(
+                (states) => Styles.primaryColor.withOpacity(
+                  0.5,
+                ),
+              ),
+              hoverColor: Styles.primaryColor.withOpacity(0.1),
               toggleable: true,
               onChanged: (String? newValue) {
                 onChanged!(newValue);

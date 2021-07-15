@@ -50,25 +50,25 @@ class CustomTextFormField extends StatelessWidget {
           prefixIcon: prefixIcon,
           filled: true,
           suffixIcon: suffixIcon,
-          fillColor: Styles.primaryColor.withOpacity(0.1),
-          focusColor: Styles.primaryColor.withOpacity(0.5),
+          fillColor: Colors.white,
+          focusColor: Colors.white,
           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
               width: 2,
-              color: Styles.primaryColor.withOpacity(0.50),
+              color: Styles.primaryColor.withOpacity(0.60),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
               width: 2,
-              color: Styles.primaryColor.withOpacity(0.20),
+              color: Styles.primaryColor.withOpacity(0.30),
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(
               width: 2,
-              color: Colors.red.withOpacity(0.20),
+              color: Colors.red.withOpacity(0.30),
             ),
           ),
           // border: OutlineInputBorder(

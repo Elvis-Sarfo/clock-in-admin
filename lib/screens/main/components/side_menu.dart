@@ -15,65 +15,70 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SingleChildScrollView(
-        // it enables scrolling
-        child: Column(
-          children: [
-            DrawerHeader(
-              child: Image.asset("assets/images/logo.png"),
-            ),
-            DrawerListTile(
-              title: "Dashbord",
-              leadingIcon: Icons.groups,
-              press: () {
-                context.read<PageRouteController>().navigate(DashboardScreen());
-                if (!Responsive.isDesktop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            DrawerListTile(
-              title: "Attendance",
-              leadingIcon: Icons.update,
-              press: () {
-                context
-                    .read<PageRouteController>()
-                    .navigate(TeachersScreen(), title: 'Teachers');
-                if (!Responsive.isDesktop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            DrawerListTile(
-              title: "Teacher",
-              leadingIcon: Icons.people,
-              press: () {
-                context
-                    .read<PageRouteController>()
-                    .navigate(TeachersScreen(), title: 'Teachers');
-                if (!Responsive.isDesktop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            DrawerListTile(
-              title: "Students",
-              leadingIcon: Icons.groups,
-              press: () {},
-            ),
-            DrawerListTile(
-              title: "Profile",
-              leadingIcon: Icons.person,
-              press: () {},
-            ),
-            DrawerListTile(
-              title: "Settings",
-              leadingIcon: Icons.settings,
-              press: () {},
-            ),
-          ],
+      child: Stack(children: [
+        Image.asset("assets/images/nav_nachos@2x.png", height: double.infinity),
+        SingleChildScrollView(
+          // it enables scrolling
+          child: Column(
+            children: [
+              DrawerHeader(
+                child: Image.asset("assets/images/logo.png"),
+              ),
+              DrawerListTile(
+                title: "Dashbord",
+                leadingIcon: Icons.groups,
+                press: () {
+                  context
+                      .read<PageRouteController>()
+                      .navigate(DashboardScreen());
+                  if (!Responsive.isDesktop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              DrawerListTile(
+                title: "Attendance",
+                leadingIcon: Icons.update,
+                press: () {
+                  context
+                      .read<PageRouteController>()
+                      .navigate(TeachersScreen(), title: 'Teachers');
+                  if (!Responsive.isDesktop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              DrawerListTile(
+                title: "Teacher",
+                leadingIcon: Icons.people,
+                press: () {
+                  context
+                      .read<PageRouteController>()
+                      .navigate(TeachersScreen(), title: 'Teachers');
+                  if (!Responsive.isDesktop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              DrawerListTile(
+                title: "Students",
+                leadingIcon: Icons.groups,
+                press: () {},
+              ),
+              DrawerListTile(
+                title: "Profile",
+                leadingIcon: Icons.person,
+                press: () {},
+              ),
+              DrawerListTile(
+                title: "Settings",
+                leadingIcon: Icons.settings,
+                press: () {},
+              ),
+            ],
+          ),
         ),
-      ),
+      ]),
     );
   }
 }

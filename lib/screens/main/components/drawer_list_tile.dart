@@ -20,12 +20,12 @@ class DrawerListTile extends StatelessWidget {
       horizontalTitleGap: 0.0,
       leading: Icon(
         leadingIcon ?? Icons.grid_view,
-        color: Colors.white54,
-        size: 16,
+        color: Colors.white70,
+        size: 24,
       ),
       title: Text(
         title,
-        style: TextStyle(color: Colors.white54),
+        style: TextStyle(color: Colors.white70, fontSize: 18),
       ),
     );
   }

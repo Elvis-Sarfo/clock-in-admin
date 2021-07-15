@@ -27,7 +27,8 @@ class AutocompleteBasicExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Autocomplete<String>(
-      // fieldViewBuilder: _fieldViewBuilder,
+      fieldViewBuilder: _fieldViewBuilder,
+      optionsViewBuilder: _optionsViewBuilder,
       optionsBuilder: (TextEditingValue textEditingValue) {
         if (textEditingValue.text == '') {
           return const Iterable<String>.empty();
@@ -52,6 +53,36 @@ class AutocompleteBasicExample extends StatelessWidget {
       hintText: 'Town of Residence',
       controller: textEditingController,
       focusNode: focusNode,
+    );
+  }
+
+  Widget _optionsViewBuilder(BuildContext context,
+      AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Material(
+        elevation: 4.0,
+        child: SizedBox(
+          height: 300.0,
+          width: 200.0,
+          child: ListView.builder(
+            padding: EdgeInsets.zero,
+            itemCount: options.length,
+            itemBuilder: (BuildContext context, int index) {
+              final option = options.elementAt(index);
+              return InkWell(
+                onTap: () {
+                  onSelected(option);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(option),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

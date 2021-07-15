@@ -41,7 +41,7 @@ class _GenderSelectorState extends State<GenderSelector> {
         vertical: 5,
       ),
       decoration: BoxDecoration(
-          color: Styles.primaryColor.withOpacity(0.1),
+          color: Colors.white,
           border: Styles.border,
           borderRadius: BorderRadius.all(Radius.circular(5))),
       child: Row(

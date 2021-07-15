@@ -8,8 +8,10 @@ class Styles {
   // https://youtu.be/9NBBk10axME
 
   // COLORS
-  static const primaryColor = Color(0xFF265878);
-  static const secondaryColor = Color(0xFF3d8c95);
+  static const primaryColor = Color(0xFF051e34);
+  // static const primaryColor = Color(0xFF265878);
+  static const secondaryColor = Color(0xFF265878);
+  // static const secondaryColor = Color(0xFF3d8c95);
   static const complementaryColor = Color(0xFFE6873C);
   static const backgroundColor = Color(0xFFEFF2F8);
   // static const backgroundColor = Color(0xFF225675);

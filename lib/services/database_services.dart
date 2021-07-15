@@ -5,31 +5,31 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-class DatabaseServices {
-  static Future<QuerySnapshot> getDataFromDatabase(String collection) async {
+class FirestoreDB {
+  static Future<QuerySnapshot> getallDocs(String? collection) async {
     await Firebase.initializeApp();
     var db = FirebaseFirestore.instance;
-    CollectionReference reference = db.collection(collection);
+    CollectionReference reference = db.collection(collection!);
     return reference.get();
   }
 
-  static Future<DocumentSnapshot> querySingleUserById(
-      String docId, String collection) async {
+  static Future<DocumentSnapshot> getDocById(
+      String? docId, String? collection) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    return firebaseFirestore.collection(collection).doc(docId).get();
+    return firebaseFirestore.collection(collection!).doc(docId!).get();
   }
 
-  static Future<QuerySnapshot> queryFromDatabaseByField(
-      String collection, String fieldName, dynamic value) async {
+  static Future<QuerySnapshot> getDocByField(
+      String? collection, String? fieldName, dynamic value) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     return firebaseFirestore
-        .collection(collection)
-        .where(fieldName, isEqualTo: value)
+        .collection(collection!)
+        .where(fieldName!, isEqualTo: value)
         .get();
   }
 
-  static Future<String> uploadFile(
-      var file, String folederPath, String? filename) async {
+  static Future<String> saveFile(
+      var file, String? folederPath, String? filename) async {
     var _filename = filename == null
         ? (kIsWeb)
             ? DateTime.now().toString()
@@ -52,41 +52,41 @@ class DatabaseServices {
     return name;
   }
 
-  static updateDocument(
-      String collection, String docId, Map<String, dynamic> update) async {
+  static updateDoc(
+      String? collection, String? docId, Map<String, dynamic>? update) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    return firebaseFirestore.collection(collection).doc(docId).update(update);
+    return firebaseFirestore.collection(collection!).doc(docId).update(update!);
   }
 
-  static setDocument(
-      String collection, String docId, Map<String, dynamic> update) async {
+  static setDoc(
+      String? collection, String? docId, Map<String, dynamic>? update) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    return firebaseFirestore.collection(collection).doc(docId).set(update);
+    return firebaseFirestore.collection(collection!).doc(docId).set(update!);
   }
 
-  static Future<DocumentReference> saveData(
-      String collection, Map<String, dynamic> data) async {
-    return await FirebaseFirestore.instance.collection(collection).add(data);
+  static Future<DocumentReference> addDoc(
+      String? collection, Map<String, dynamic>? data) async {
+    return await FirebaseFirestore.instance.collection(collection!).add(data!);
   }
 
-  static Future<void> saveDataWithId(
-      String collection, Map<String, dynamic> data, String docId) async {
-    var _existinfDoc =
-        await DatabaseServices.querySingleUserById(docId, collection);
+  static Future<String> addDocWithId(
+      String? collection, Map<String, dynamic>? data, String? docId) async {
+    var _existinfDoc = await FirestoreDB.getDocById(docId!, collection!);
     if (!_existinfDoc.exists) {
       await FirebaseFirestore.instance
           .collection(collection)
           .doc(docId)
-          .set(data);
+          .set(data!);
+      return 'saved';
     } else {
       throw ('Doument Id already Exist');
     }
   }
 
-  static Future<void> deleteDocument(String collection, String docId) async {
+  static Future<void> deleteDoc(String? collection, String? docId) async {
     return await FirebaseFirestore.instance
-        .collection(collection)
-        .doc(docId)
+        .collection(collection!)
+        .doc(docId!)
         .delete()
         .then((value) => print("User Deleted"))
         .catchError((error) => print("Failed to delete user: $error"));
