@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatelessWidget {
   final Widget? prefixIcon, suffixIcon;
   final String? hintText;
-  FocusNode? focusNode;
+  final FocusNode? focusNode;
   final int? maxLines, minLines;
   final TextEditingController? controller;
   final TextInputType? type;

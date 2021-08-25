@@ -1,5 +1,7 @@
-import 'package:clock_in_admin/controllers/menu_controller.dart';
-import 'package:clock_in_admin/controllers/page_route_controller.dart';
+import 'package:clock_in_admin/controllers/menu.controller.dart';
+import 'package:clock_in_admin/controllers/page_route.controller.dart';
+import 'package:clock_in_admin/controllers/teacher.controller.dart';
+import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,12 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<PageRouteController>(
             create: (context) => PageRouteController(),
+          ),
+          ChangeNotifierProvider<TeacherController>(
+            create: (context) => TeacherController(),
+          ),
+          ChangeNotifierProvider<TeacherAttendanceController>(
+            create: (context) => TeacherAttendanceController(context: context),
           ),
         ],
         child: MainScreen(),

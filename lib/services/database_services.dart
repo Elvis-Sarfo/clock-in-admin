@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class FirestoreDB {
-  static Future<QuerySnapshot> getallDocs(String? collection) async {
-    await Firebase.initializeApp();
+  static Future<QuerySnapshot> getAll(String? collection) async {
     var db = FirebaseFirestore.instance;
     CollectionReference reference = db.collection(collection!);
     return reference.get();

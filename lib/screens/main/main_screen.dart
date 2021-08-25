@@ -1,5 +1,5 @@
-import 'package:clock_in_admin/controllers/menu_controller.dart';
-import 'package:clock_in_admin/controllers/page_route_controller.dart';
+import 'package:clock_in_admin/controllers/menu.controller.dart';
+import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,7 +1,8 @@
-import 'package:clock_in_admin/controllers/page_route_controller.dart';
+import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/screens/dashboard/dashboard_screen.dart';
 import 'package:clock_in_admin/screens/teachers/teachers_screen.dart';
+import 'package:clock_in_admin/screens/teachers_attendance/teachers_attendance_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +27,7 @@ class SideMenu extends StatelessWidget {
               ),
               DrawerListTile(
                 title: "Dashbord",
-                leadingIcon: Icons.groups,
+                leadingIcon: Icons.group,
                 press: () {
                   context
                       .read<PageRouteController>()
@@ -40,9 +41,9 @@ class SideMenu extends StatelessWidget {
                 title: "Attendance",
                 leadingIcon: Icons.update,
                 press: () {
-                  context
-                      .read<PageRouteController>()
-                      .navigate(TeachersScreen(), title: 'Teachers');
+                  context.read<PageRouteController>().navigate(
+                      TeachersAttendanceScreen(),
+                      title: 'Teachers Attendance');
                   if (!Responsive.isDesktop(context)) {
                     Navigator.pop(context);
                   }
@@ -62,7 +63,7 @@ class SideMenu extends StatelessWidget {
               ),
               DrawerListTile(
                 title: "Students",
-                leadingIcon: Icons.groups,
+                leadingIcon: Icons.group,
                 press: () {},
               ),
               DrawerListTile(

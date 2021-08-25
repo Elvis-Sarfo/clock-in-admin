@@ -1,16 +1,17 @@
 import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/custom_alert_dailog.dart';
 import 'package:clock_in_admin/components/custom_switch.dart';
-import 'package:clock_in_admin/controllers/teacher.controller.dart';
+import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
+import 'package:clock_in_admin/models/teacher_attendance.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../view_teacher_dialog.dart';
+import '../view_teacher_attendance_dialog.dart';
 
-class TeachersTable extends StatelessWidget {
-  const TeachersTable({
+class TeachersAttendancesTable extends StatelessWidget {
+  const TeachersAttendancesTable({
     Key? key,
   }) : super(key: key);
 
@@ -35,15 +36,15 @@ class TeachersTable extends StatelessWidget {
               shadowColor: Colors.transparent,
             ),
           ),
-          child: Consumer<TeacherController>(
-            builder: (context, teachersState, child) {
-              if (teachersState.hasError) {
+          child: Consumer<TeacherAttendanceController>(
+            builder: (context, attendanceState, child) {
+              if (attendanceState.hasError) {
                 return Padding(
                   padding: const EdgeInsets.all(100.0),
                   child: Center(child: Text('Something went wrong')),
                 );
               }
-              if (teachersState.waiting) {
+              if (attendanceState.waiting) {
                 return Padding(
                   padding: const EdgeInsets.all(100.0),
                   child: Center(
@@ -56,7 +57,7 @@ class TeachersTable extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "List of teachers",
+                      "List of Teachers Attendance for today",
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     ElevatedButton.icon(
@@ -103,7 +104,8 @@ class TeachersTable extends StatelessWidget {
                     textAlign: TextAlign.center,
                   )),
                 ],
-                source: DataSource(teachersState.getFilteredTeachers, context),
+                source:
+                    DataSource(attendanceState.getTeachersAttendance, context),
               );
             },
           ),
@@ -114,45 +116,26 @@ class TeachersTable extends StatelessWidget {
 }
 
 class DataSource extends DataTableSource {
-  List? asyncSnapshot;
+  Map<String, dynamic> iterable;
   BuildContext? context;
   // Constructor
-  DataSource(this.asyncSnapshot, this.context);
-
-  setList(List list) {
-    asyncSnapshot = list;
-  }
+  DataSource(this.iterable, this.context);
 
   // Start Overides
   @override
   DataRow getRow(int index) {
-    var docSnapshot = asyncSnapshot![index];
-    Teacher teacher = Teacher.fromMapObject(docSnapshot.data());
+    var _key = iterable.keys.toList()[index];
+    var item = iterable[_key];
+    Teacher teacher = Teacher.fromMapObject(item['details']);
+    TeacherAttendance? attendance = item['clocks']!.length > 0
+        ? TeacherAttendance.fromMapObject(item['clocks'][0])
+        : null;
+
     bool selected = false;
     return DataRow.byIndex(
-      // color: MaterialStateProperty.resolveWith<Color>(
-      //   (Set<MaterialState> states) {
-      //     if (states.contains(MaterialState.selected))
-      //       return Theme.of(context!).colorScheme.primary.withOpacity(0.08);
-      //     return Styles.primaryColor; // Use the default value.
-      //   },
-      // ),
       selected: selected,
-      // onSelectChanged: (value) {
-      //   selected = value;
-      //   // showDialog(
-      //   //   context: context,
-      //   //   builder: (BuildContext context) {
-      //   //     return ViewFarmer(
-      //   //       farmer: farmer,
-      //   //       farmerId: docSnapshot.id,
-      //   //     );
-      //   //   },
-      //   // );
-      // },
       index: index,
       cells: <DataCell>[
-        // DataCell(Image.network(farmer.picture)),
         // IMAGE DATA CELL
         DataCell(
           Padding(
@@ -177,12 +160,16 @@ class DataSource extends DataTableSource {
         DataCell(Text(teacher.staffId!,
             style: TextStyle(fontWeight: FontWeight.bold))),
         DataCell(Text(teacher.fullName()!)),
-        DataCell(Text(teacher.phone!)),
-        DataCell(Text(teacher.residence!)),
-        DataCell(Text(teacher.gender!.toUpperCase())),
+        DataCell(Text(attendance?.type ?? '')),
+        DataCell(Text(attendance?.type ?? '')),
+        DataCell(Text(attendance?.time != null
+            ? DateTime.fromMillisecondsSinceEpoch(attendance!.time!)
+                .hour
+                .toString()
+            : '')),
         DataCell(
           CustomSwitch(
-            isSwitched: teacher.enabled ?? false,
+            isSwitched: false,
             onChanged: (value) async {},
           ),
         ),
@@ -200,7 +187,7 @@ class DataSource extends DataTableSource {
                   showDialog(
                     context: context!,
                     builder: (BuildContext context) {
-                      return ViewTeacherDialog();
+                      return ViewTeacherAttendanceDialog();
                     },
                   );
                 },
@@ -304,7 +291,7 @@ class DataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => asyncSnapshot!.length;
+  int get rowCount => iterable.length;
 
   @override
   int get selectedRowCount => 0;

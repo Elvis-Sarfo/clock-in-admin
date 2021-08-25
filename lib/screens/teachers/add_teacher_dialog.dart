@@ -221,7 +221,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                     ),
                   ),
                   onPressed: saveTeacherinDB,
-                  icon: Icon(Icons.upload),
+                  icon: Icon(Icons.save),
                   label: Text("Save Data"),
                 ),
               ],
