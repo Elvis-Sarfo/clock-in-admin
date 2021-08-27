@@ -22,8 +22,8 @@ class TeacherAttendance {
   }
 
   //convert from map object to teacher attendace object
-  TeacherAttendance.fromMapObject(Map<String, dynamic> map) {
-    this.time = map['time'];
+  TeacherAttendance.fromMapObject(Map<String, dynamic>? map) {
+    this.time = map!['time'];
     this.type = map['type'];
     this.teacherId = map['teacherId'];
     this.location = map['location'];

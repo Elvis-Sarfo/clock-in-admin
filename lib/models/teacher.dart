@@ -25,16 +25,16 @@ class Teacher {
       this.enabled});
 
   //convert from map object to teacher object
-  Teacher.fromMapObject(Map<String, dynamic?> map) {
-    this.staffId = map['staffId'];
-    this.firstName = map['firstName'];
-    this.lastName = map['lastName'];
-    this.gender = map['gender'];
-    this.email = map['email'];
-    this.phone = map['phone'];
-    this.subject = map['subject'];
-    this.residence = map['residence'];
-    this.enabled = map['enabled'];
+  Teacher.fromMapObject(Map<String, dynamic>? map) {
+    this.staffId = map?['staffId'];
+    this.firstName = map?['firstName'];
+    this.lastName = map?['lastName'];
+    this.gender = map?['gender'];
+    this.email = map?['email'];
+    this.phone = map?['phone'];
+    this.subject = map?['subject'];
+    this.residence = map?['residence'];
+    this.enabled = map?['enabled'];
   }
 
   //convert from teacher object to map object
@@ -55,5 +55,7 @@ class Teacher {
   }
 
   // Get the full name of the teacher
-  String? fullName() => '${this.firstName!} ${this.lastName!}';
+  String? fullName() => this.firstName != null || this.lastName != null
+      ? '${this.firstName ?? ''} ${this.lastName ?? ''}'
+      : null;
 }

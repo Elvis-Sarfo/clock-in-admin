@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/custom_alert_dailog.dart';
 import 'package:clock_in_admin/components/custom_switch.dart';
@@ -5,7 +6,9 @@ import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/models/teacher_attendance.dart';
 import 'package:clock_in_admin/responsive.dart';
+import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';
+import 'package:clock_in_admin/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_teacher_attendance_dialog.dart';
@@ -80,6 +83,12 @@ class TeachersAttendancesTable extends StatelessWidget {
                 columnSpacing: 5,
                 columns: <DataColumn>[
                   DataColumn(
+                    label: Text(
+                      'Action',
+                      // textAlign: TextAlign.center,
+                    ),
+                  ),
+                  DataColumn(
                     label: Text(''),
                   ),
                   DataColumn(
@@ -89,20 +98,8 @@ class TeachersAttendancesTable extends StatelessWidget {
                     label: Text('Name'),
                   ),
                   DataColumn(
-                    label: Text('Phone'),
+                    label: Text('Attendance Log'),
                   ),
-                  DataColumn(
-                    label: Text('Location'),
-                  ),
-                  DataColumn(
-                    label: Text('Gender'),
-                  ),
-                  DataColumn(label: Text('Enabled')),
-                  DataColumn(
-                      label: Text(
-                    'Actions',
-                    textAlign: TextAlign.center,
-                  )),
                 ],
                 source:
                     DataSource(attendanceState.getTeachersAttendance, context),
@@ -116,26 +113,165 @@ class TeachersAttendancesTable extends StatelessWidget {
 }
 
 class DataSource extends DataTableSource {
-  Map<String, dynamic> iterable;
+  Map<String, dynamic>? iterable;
   BuildContext? context;
   // Constructor
   DataSource(this.iterable, this.context);
 
+  Widget _buildAttendanceLogWidget(List clocks) {
+    clocks.sort((a, b) {
+      return b['time'].compareTo(a['time']);
+    });
+    return clocks.length > 0
+        ? Row(
+            children: List.generate(
+              clocks.length > 3 ? 4 : clocks.length,
+              (index) {
+                TeacherAttendance attendance =
+                    TeacherAttendance.fromMapObject(clocks[index]);
+                if (index == 3) {
+                  return SizedBox(
+                    width: 50.0,
+                    child: DefaultTextStyle(
+                      style: const TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black45,
+                      ),
+                      child: AnimatedTextKit(
+                        repeatForever: true,
+                        animatedTexts: [
+                          TyperAnimatedText('...'),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return _attendanceLogContainer(index, attendance);
+              },
+            ),
+          )
+        : SizedBox(
+            width: 250.0,
+            child: DefaultTextStyle(
+              style: const TextStyle(fontSize: 18.0, color: Colors.red),
+              child: AnimatedTextKit(
+                repeatForever: true,
+                animatedTexts: [
+                  ScaleAnimatedText(
+                    'Not Reported',
+                    duration: const Duration(milliseconds: 1000),
+                    scalingFactor: 0.7,
+                  ),
+                ],
+              ),
+            ),
+          );
+  }
+
+  _attendanceLogContainer(int index, TeacherAttendance attendance) {
+    var _isLatestClock = index == 0;
+    var _isClockedIn = attendance.type == 'in';
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: Container(
+          width: _isLatestClock ? 100 : 85,
+          margin: EdgeInsets.symmetric(
+            horizontal: 5,
+          ),
+          padding: EdgeInsets.symmetric(
+              horizontal: _isLatestClock ? 5 : 2, vertical: 2),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              shape: BoxShape.rectangle,
+              color: _isLatestClock
+                  ? attendance.type == 'in'
+                      ? Colors.green.withOpacity(0.2)
+                      : Colors.red.withOpacity(0.2)
+                  : Colors.white,
+              border: Border.all(
+                  color: _isLatestClock
+                      ? _isClockedIn
+                          ? Colors.green
+                          : Colors.red
+                      : Colors.black45,
+                  width: 1)),
+          child: Row(
+            children: [
+              Container(
+                height: _isLatestClock ? 20.0 : 16.0,
+                width: _isLatestClock ? 20.0 : 16.0,
+                decoration: BoxDecoration(
+                    color: _isClockedIn ? Colors.green : Colors.red,
+                    shape: BoxShape.circle),
+                child: Icon(
+                  _isClockedIn ? Icons.check : Icons.close,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_isLatestClock)
+                    Text(
+                      attendance.type!.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  Text(
+                    Utils.convertMillSecsToDateString(attendance.time!),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )),
+    );
+  }
+
   // Start Overides
   @override
   DataRow getRow(int index) {
-    var _key = iterable.keys.toList()[index];
-    var item = iterable[_key];
-    Teacher teacher = Teacher.fromMapObject(item['details']);
-    TeacherAttendance? attendance = item['clocks']!.length > 0
-        ? TeacherAttendance.fromMapObject(item['clocks'][0])
-        : null;
+    var _key = iterable!.keys.toList()[index];
+    var item = iterable![_key];
+    Teacher? teacher = Teacher.fromMapObject(item['details']);
+    late Widget? attendanceLog = _buildAttendanceLogWidget(item['clocks']);
 
     bool selected = false;
     return DataRow.byIndex(
       selected: selected,
       index: index,
       cells: <DataCell>[
+        DataCell(
+          IconButton(
+            icon: const Icon(
+              Icons.remove_red_eye,
+              color: Styles.primaryColor,
+            ),
+            tooltip: 'View',
+            splashRadius: 20,
+            onPressed: () {
+              showDialog(
+                context: context!,
+                builder: (BuildContext context) {
+                  return ViewTeacherAttendanceDialog();
+                },
+              );
+            },
+          ),
+        ),
         // IMAGE DATA CELL
         DataCell(
           Padding(
@@ -147,7 +283,7 @@ class DataSource extends DataTableSource {
                     )
                   : CircularImage(
                       child: Image.asset(
-                        teacher.gender!.toLowerCase() == 'male'
+                        teacher.gender?.toLowerCase() == 'male'
                             ? 'assets/images/teacher_male-no-bg.png'
                             : 'assets/images/teacher-female-no-bg.png',
                       ),
@@ -157,132 +293,10 @@ class DataSource extends DataTableSource {
           ),
         ),
         // DataCell(Text('images')),
-        DataCell(Text(teacher.staffId!,
+        DataCell(Text(teacher.staffId ?? '',
             style: TextStyle(fontWeight: FontWeight.bold))),
-        DataCell(Text(teacher.fullName()!)),
-        DataCell(Text(attendance?.type ?? '')),
-        DataCell(Text(attendance?.type ?? '')),
-        DataCell(Text(attendance?.time != null
-            ? DateTime.fromMillisecondsSinceEpoch(attendance!.time!)
-                .hour
-                .toString()
-            : '')),
-        DataCell(
-          CustomSwitch(
-            isSwitched: false,
-            onChanged: (value) async {},
-          ),
-        ),
-        DataCell(
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.remove_red_eye,
-                  color: Styles.primaryColor,
-                ),
-                tooltip: 'View',
-                splashRadius: 20,
-                onPressed: () {
-                  showDialog(
-                    context: context!,
-                    builder: (BuildContext context) {
-                      return ViewTeacherAttendanceDialog();
-                    },
-                  );
-                },
-              ),
-              IconButton(
-                splashRadius: 20,
-                icon: const Icon(
-                  Icons.edit,
-                  color: Styles.secondaryColor,
-                ),
-                tooltip: 'Edit',
-                onPressed: () {
-                  // showDialog(
-                  //   context: context!,
-                  //   builder: (BuildContext context) {
-                  //     return UpdateFarmer(
-                  //       farmer: farmer,
-                  //       farmerDocSnap: docSnapshot,
-                  //     );
-                  //   },
-                  // );
-                },
-              ),
-              IconButton(
-                splashRadius: 20,
-                icon: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-                tooltip: 'Delete',
-                onPressed: () {
-                  showDialog(
-                    context: context!,
-                    builder: (BuildContext context) {
-                      return CustomAlertDialog(
-                        title: 'Are you sure you want to delete?',
-                        descriptions: 'This action cannot be undone!',
-                        dialogIcon: Icon(
-                          Icons.delete_forever,
-                          color: Colors.red,
-                          size: 70,
-                        ),
-                        actionsButtons: [
-                          TextButton(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all<Color>(Colors.red),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 12,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              // deleteFarmer(docSnapshot.id);
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Delete',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            ),
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Styles.primaryColor),
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 12,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+        DataCell(Text(teacher.fullName() ?? '')),
+        DataCell(attendanceLog),
       ],
     );
   }
@@ -291,7 +305,7 @@ class DataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => iterable.length;
+  int get rowCount => iterable!.length;
 
   @override
   int get selectedRowCount => 0;
