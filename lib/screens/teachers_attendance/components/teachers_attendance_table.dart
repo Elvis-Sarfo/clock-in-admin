@@ -1,12 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:clock_in_admin/components/circular_image.dart';
-import 'package:clock_in_admin/components/custom_alert_dailog.dart';
-import 'package:clock_in_admin/components/custom_switch.dart';
 import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/models/teacher_attendance.dart';
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +70,7 @@ class TeachersAttendancesTable extends StatelessWidget {
                       ),
                       onPressed: () {},
                       icon: Icon(Icons.add),
-                      label: Text("Add New"),
+                      label: Text("Add A Search"),
                     ),
                   ],
                 ),
@@ -223,7 +220,6 @@ class DataSource extends DataTableSource {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
                       ),
                     ),
                   Text(
