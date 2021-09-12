@@ -30,7 +30,7 @@ class Styles {
   static const paragraph = TextStyle(
     fontSize: 18,
     height: 1.5,
-    color: Colors.black87,
+    color: Colors.black54,
     fontWeight: FontWeight.bold,
   );
 

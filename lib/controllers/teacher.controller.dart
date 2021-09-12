@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:clock_in_admin/services/auth_services.dart';
+import 'package:clock_in_admin/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clock_in_admin/models/teacher.dart';
@@ -8,7 +10,12 @@ class TeacherController extends ChangeNotifier {
   List<DocumentSnapshot> _teachers = [], _filteredTeachers = [];
   StreamSubscription? _subscription;
   int sortColumnIndex = 1;
-  bool waiting = true, hasError = false, done = false, sortAscending = true;
+  bool waiting = true,
+      hasError = false,
+      done = false,
+      sortAscending = true,
+      isUpdatingTeacher = false,
+      showErrorMsg = false;
 
   TeacherController() {
     streamTeachersData();
@@ -81,6 +88,93 @@ class TeacherController extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /// Saves the data in the database
+  // updateTeacherinDB(Teacher oldTeacher, Teacher newTeacher, GlobalKey<FormState> _formKey, profileImage) async {
+  //   // TOdo: Might add this task to the contoller of provider
+  //   // todo: Add a layer to cover the dialog and show progress of the task
+  //   try {
+  //     if (!isUpdatingTeacher) {
+  //         isUpdatingTeacher = true;
+  //         showErrorMsg = false;
+  //         notifyListeners();
+
+  //       if (_formKey.currentState!.validate()) {
+  //         _formKey.currentState!.save();
+
+  //         // Sign teacher in with email and password
+  //         // Defualt password is the STAFFID of the teacher
+  //         if (oldTeacher.email != newTeacher.email) {
+  //           var authResult = await Auth.signUpWithEmailandPassword(
+  //             email: newTeacher.email,
+  //             password: newTeacher.staffId,
+  //           );
+  //         }
+  //         var result;
+  //         // todo: Check if the user is signed up first before you continue the next task
+  //         if (oldTeacher.staffId == newTeacher.staffId) {
+  //           result = await FirestoreDB.updateDoc(
+  //             'teachers',
+  //             newTeacher.staffId,
+  //             newTeacher.toMap(),
+  //           );
+  //         } else {
+  //           // Save the new teacher data with the new StaffID
+  //           result = await FirestoreDB.addDocWithId(
+  //             'teachers',
+  //             newTeacher.toMap(),
+  //             newTeacher.staffId,
+  //           );
+  //           // Delete the old the data of the teacher
+  //           await FirestoreDB.deleteDoc('teachers', newTeacher.staffId);
+
+  //           // todo: Cascade through the attendance log and update all the staff ids in the  database
+  //           Map<String, dynamic> update = {"teacherId": newTeacher.staffId};
+  //           final CollectionReference teacherClocks =
+  //               FirebaseFirestore.instance.collection('teacher_clocks');
+  //           teacherClocks
+  //               .where('teacherId', isEqualTo: newTeacher.staffId)
+  //               .orderBy('time', descending: true)
+  //               .get()
+  //               .then((snapshot) async {
+  //             WriteBatch writeBatch = FirebaseFirestore.instance.batch();
+  //             snapshot.docs.forEach((doc) {
+  //               var docRef = teacherClocks.doc(doc.id);
+  //               writeBatch.update(docRef, update);
+  //             });
+  //             await writeBatch.commit();
+  //             print('updated all documents inside');
+  //           });
+  //         }
+
+  //         // print the results of the firebase
+  //         print(result);
+
+  //         // save the image in the firebase storage
+  //         var imageUrl = (profileImage != null)
+  //             ? await FirestoreDB.saveFile(profileImage, '/teachers/',
+  //                 newTeacher.fullName()!.replaceAll(' ', '_'))
+  //             : null;
+
+  //         if (imageUrl != null) {
+  //           // update the teacher pictureURL field
+  //           Map<String, dynamic> uppdate = {"picture": imageUrl};
+  //           await FirestoreDB.updateDoc('teachers', newTeacher.staffId, uppdate);
+  //         }
+  //         Navigator.of(context).pop();
+  //       } else {
+  //           isUpdatingTeacher = false;
+  //           showErrorMsg = false;
+  //         notifyListeners();
+  //       }
+  //     }
+  //   } catch (e) {
+  //       isUpdatingTeacher = false;
+  //       showErrorMsg = false;
+  //       notifyListeners();
+  //   }
+  // }
+
 }
 
 

@@ -56,6 +56,7 @@ class TeacherAttendanceController extends ChangeNotifier {
 
         for (var i = 0; i < _maxIterations; i++) {
           var att, _key;
+
           if (_data.length > i) {
             att = _data[i].data();
             _key = att!['teacherId'];
@@ -72,7 +73,7 @@ class TeacherAttendanceController extends ChangeNotifier {
 
           if (att != null && !at.containsKey(_key)) {
             at[_key] = {
-              'details': null,
+              'details': <String, dynamic>{},
               'clocks': [att]
             };
           } else if (att != null && at.containsKey(_key)) {

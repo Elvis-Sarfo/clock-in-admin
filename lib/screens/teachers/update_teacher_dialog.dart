@@ -3,6 +3,7 @@ import 'package:clock_in_admin/components/gender_selector.dart';
 import 'package:clock_in_admin/components/image_chooser.dart';
 import 'package:clock_in_admin/components/main_button.dart';
 import 'package:clock_in_admin/components/type_ahead_input.dart';
+import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/services/auth_services.dart';
@@ -13,6 +14,7 @@ import 'package:clock_in_admin/services/positions_services.dart';
 import 'package:clock_in_admin/services/subject_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/form_validator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class UpdateTeacherDialog extends StatefulWidget {
@@ -63,7 +65,8 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
 
   @override
   void initState() {
-    _teacher = widget.teacher!;
+    // create a new object for the teacher
+    _teacher = Teacher.fromMapObject(widget.teacher!.toMap());
     staffIdController = TextEditingController(text: _teacher?.staffId ?? '');
     locationController = TextEditingController(text: _teacher?.residence ?? '');
     subjectController = TextEditingController(text: _teacher?.subject ?? '');
@@ -305,12 +308,15 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
     // todo: Add a layer to cover the dialog and show progress of the task
     try {
       if (!_isLoading) {
+        // set the loading to [true] to show the loading button
         setState(() {
           _isLoading = true;
           showErrorMsg = false;
         });
 
+        // Check if the form state is valid
         if (_formKey.currentState!.validate()) {
+          // invoce form save method
           _formKey.currentState!.save();
 
           // Sign teacher in with email and password
@@ -321,36 +327,37 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
               password: _teacher!.staffId,
             );
           }
-          var result;
+          await uploadProfilePicture();
+
           // todo: Check if the user is signed up first before you continue the next task
+          // variable to hold te results of the database actions
+          var result;
+
+          /// Check if the staff changed
+          /// if it has not changed update the rest of the fields
+          /// else delete create a new document with a new ID and delete the old
+          /// from the databse collection.
+          /// Again if the staffID has changed, cascade through the teacher log of
+          ///  the old staffID andupdate the IDs to have the new staff ID
           if (widget.teacher!.staffId == _teacher!.staffId) {
+            // update the document
             result = await FirestoreDB.updateDoc(
               'teachers',
               _teacher!.staffId,
               _teacher!.toMap(),
             );
           } else {
-            await FirestoreDB.deleteDoc('teachers', _teacher!.staffId);
-            result = await FirestoreDB.addDocWithId(
-              'teachers',
-              _teacher!.toMap(),
-              _teacher!.staffId,
-            );
-
-            // todo: Cascade through the attendance log and update all the staff ids in the  database
+            // Save the new teacher data with the new StaffID
+            result = await updateStaffId(result);
           }
+
+          // print the results of the firebase
+          print(result);
 
           // save the image in the firebase storage
-          var imageUrl = (profileImage != null)
-              ? await FirestoreDB.saveFile(profileImage, '/teachers/',
-                  _teacher!.fullName()!.replaceAll(' ', '_'))
-              : null;
+          await uploadProfilePicture();
 
-          if (imageUrl != null) {
-            // update the teacher pictureURL field
-            Map<String, dynamic> uppdate = {"picture": imageUrl};
-            await FirestoreDB.updateDoc('teachers', _teacher!.staffId, uppdate);
-          }
+          TeacherAttendanceController().streamTeachersAttendanceData();
           Navigator.of(context).pop();
         } else {
           setState(() {
@@ -365,6 +372,57 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
         showErrorMsg = false;
       });
     }
+  }
+
+  Future<void> uploadProfilePicture() async {
+    var imageUrl = (profileImage != null)
+        ? await FirestoreDB.saveFile(profileImage, '/teachers/',
+            _teacher!.fullName()!.replaceAll(' ', '_'))
+        : null;
+
+    if (imageUrl != null) {
+      // update the teacher pictureURL field
+      Map<String, dynamic> uppdate = {"picture": imageUrl};
+      await FirestoreDB.updateDoc('teachers', _teacher!.staffId, uppdate);
+    }
+  }
+
+  Future<dynamic> updateStaffId(result) async {
+    result = await FirestoreDB.addDocWithId(
+      'teachers',
+      _teacher!.toMap(),
+      _teacher!.staffId,
+    );
+    // Delete the old the data of the teacher
+    await FirestoreDB.deleteDoc('teachers', widget.teacher!.staffId);
+
+    // Cascade through the attendance log of the teacher and update all
+    // the staff ids in the  database
+
+    // create the update object
+    Map<String, dynamic> update = {"teacherId": _teacher!.staffId};
+
+    // creates the collection reference of the teacher log
+    final CollectionReference teacherClocks =
+        FirebaseFirestore.instance.collection('teacher_clocks');
+
+    // Get the teacher  attendance log datafrom the databse using the old staffID
+    var snapshot = await teacherClocks
+        .where('teacherId', isEqualTo: widget.teacher!.staffId)
+        .orderBy('time', descending: true)
+        .get();
+
+    /// Use a batch to update all the documents that returns
+    WriteBatch writeBatch = FirebaseFirestore.instance.batch();
+    snapshot.docs.forEach((doc) async {
+      var docRef = teacherClocks.doc(doc.id);
+      writeBatch.update(docRef, update);
+    });
+
+    // Comit the batch operation in the database.
+    await writeBatch.commit();
+    print('updated all documents inside');
+    return result;
   }
 
   _onImageSeleceted() {}

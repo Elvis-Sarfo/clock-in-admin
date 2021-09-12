@@ -56,6 +56,14 @@ class FirestoreDB {
     return firebaseFirestore.collection(collection!).doc(docId).update(update!);
   }
 
+  static batchUpdate(
+      DocumentReference documents, Map<String, dynamic>? update) async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    WriteBatch writeBatch = firebaseFirestore.batch();
+    writeBatch.update(documents, update!);
+    return writeBatch.commit();
+  }
+
   static setDoc(
       String? collection, String? docId, Map<String, dynamic>? update) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
