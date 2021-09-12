@@ -1,12 +1,16 @@
-import 'package:clock_in_admin/components/auto_complete_input.dart';
 import 'package:clock_in_admin/components/cus_text_form_field.dart';
-import 'package:clock_in_admin/components/drop_down_field.dart';
 import 'package:clock_in_admin/components/gender_selector.dart';
 import 'package:clock_in_admin/components/image_chooser.dart';
+import 'package:clock_in_admin/components/main_button.dart';
+import 'package:clock_in_admin/components/type_ahead_input.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/services/auth_services.dart';
+import 'package:clock_in_admin/services/cities_services.dart';
 import 'package:clock_in_admin/services/database_services.dart';
+import 'package:clock_in_admin/services/department_services.dart';
+import 'package:clock_in_admin/services/positions_services.dart';
+import 'package:clock_in_admin/services/subject_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/form_validator.dart';
 import 'package:flutter/material.dart';
@@ -42,15 +46,17 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
   ///
   /// It is set to [false] when there is no operation in progress
   /// and [true] when there is an operation in progress
-  bool isLoading = false;
+  bool _isLoading = false;
+
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController subjectController = TextEditingController();
+  final TextEditingController positionController = TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
 
   // Group the like form fields
   final _fieldGroupBuilder = (Teacher model) => [
         CustomTextFormField(
-          prefixIcon: Icon(
-            Icons.person,
-            color: Colors.black54,
-          ),
+          prefixIcon: Icon(Icons.account_circle, color: Colors.black45),
           hintText: 'Staff Id',
           onSaved: (value) {
             model.staffId = value;
@@ -61,7 +67,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
           height: 10,
         ),
         CustomTextFormField(
-          prefixIcon: Icon(Icons.person),
+          prefixIcon: Icon(Icons.person, color: Colors.black45),
           hintText: 'Firstname',
           onSaved: (value) => model.firstName = value,
           validator: emptyFeildValidator,
@@ -70,7 +76,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
           height: 10,
         ),
         CustomTextFormField(
-          prefixIcon: Icon(Icons.person),
+          prefixIcon: Icon(Icons.person, color: Colors.black45),
           hintText: 'Lastname',
           onSaved: (value) => model.lastName = value,
           validator: emptyFeildValidator,
@@ -115,7 +121,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
               horizontal: Styles.defaultPadding, vertical: 0),
           width: (Responsive.isMobile(context))
               ? size.width * 0.9
-              : size.width * 0.5,
+              : size.width * 0.4,
           child: Form(
             key: _formKey,
             child: Column(
@@ -151,14 +157,26 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                   onChanged: (value) => _teacher.gender = value,
                   onSaved: (value) => _teacher.gender = value,
                 ),
-                AutocompleteBasicExample(),
+                SizedBox(
+                  height: 10.0,
+                ),
+                // ###################################################
+                TypeAheadInput(
+                  hintText: 'Town of Residence',
+                  prefixIcon: Icon(Icons.place, color: Colors.black45),
+                  controller: locationController,
+                  suggestionsCallback: (pattern) {
+                    return CitiesService.getSuggestions(pattern);
+                  },
+                  onSaved: (value) => _teacher.residence = value,
+                ),
                 SizedBox(
                   height: 10,
                 ),
                 // ###################################################
                 // Phone field
                 CustomTextFormField(
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: Icon(Icons.phone, color: Colors.black45),
                   hintText: 'Phone',
                   onSaved: (value) => _teacher.phone = value,
                   validator: validatePhoneNumber,
@@ -169,7 +187,7 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                 // ###################################################
                 // Email field
                 CustomTextFormField(
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: Icon(Icons.email, color: Colors.black45),
                   hintText: 'Email',
                   onSaved: (value) => _teacher.email = value,
                   validator: validateEmail,
@@ -179,51 +197,77 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
                 ),
                 // ###################################################
                 // Subject Taught field
-                CustomTextFormField(
-                  prefixIcon: Icon(Icons.person),
-                  hintText: 'Subject',
-                  onSaved: (value) => _teacher.subject = value,
-                  validator: emptyFeildValidator,
+                TypeAheadInput(
+                  hintText: 'Department',
+                  prefixIcon: Icon(Icons.book, color: Colors.black45),
+                  controller: departmentController,
+                  suggestionsCallback: (pattern) {
+                    return DepartmentsService.getSuggestions(pattern);
+                  },
+                  onSaved: (value) => _teacher.department = value,
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 // ###################################################
-                // Town of residence field
-                CustomTextFormField(
-                  prefixIcon: Icon(Icons.person),
-                  hintText: 'Town of Residence',
-                  onSaved: (value) => _teacher.residence = value,
-                  validator: emptyFeildValidator,
+                // Subject Taught field
+                TypeAheadInput(
+                  hintText: 'Subject',
+                  prefixIcon: Icon(Icons.book, color: Colors.black45),
+                  controller: subjectController,
+                  suggestionsCallback: (pattern) {
+                    return SubjectsService.getSuggestions(pattern);
+                  },
+                  onSaved: (value) => _teacher.subject = value,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                // ###################################################
+                // Teacher position in the school
+                TypeAheadInput(
+                  hintText: 'Postion in School',
+                  prefixIcon: Icon(Icons.group, color: Colors.black45),
+                  controller: positionController,
+                  suggestionsCallback: (pattern) {
+                    return PositionsService.getSuggestions(pattern);
+                  },
+                  onSaved: (value) => _teacher.position = value,
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 // ###################################################
                 // Position in School field
-                DropDownField(
-                  prefixIcon: Icon(Icons.person, color: Colors.black54),
-                  onSaved: (value) => _teacher.position = value,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
+                // DropDownField(
+                //   prefixIcon: Icon(Icons.person, color: Colors.black54),
+                //   onSaved: (value) => _teacher.position = value,
+                // ),
+                // SizedBox(
+                //   height: 10,
+                // ),
 
                 SizedBox(
                   height: 10,
                 ),
-                ElevatedButton.icon(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Styles.defaultPadding * 1.5,
-                      vertical: Styles.defaultPadding /
-                          (Responsive.isMobile(context) ? 2 : 1),
-                    ),
-                  ),
-                  onPressed: saveTeacherinDB,
-                  icon: Icon(Icons.save),
-                  label: Text("Save Data"),
+                MainButton(
+                  isLoading: _isLoading,
+                  color: Styles.primaryColor,
+                  title: 'Save Teacher',
+                  tapEvent: saveTeacherinDB,
                 ),
+                // ElevatedButton.icon(
+                //   style: TextButton.styleFrom(
+                //     padding: EdgeInsets.symmetric(
+                //       horizontal: Styles.defaultPadding * 1.5,
+                //       vertical: Styles.defaultPadding /
+                //           (Responsive.isMobile(context) ? 2 : 1),
+                //     ),
+                //   ),
+                //   onPressed: saveTeacherinDB,
+                //   icon: Icon(Icons.save),
+                //   label: Text("Save Data"),
+                // ),
               ],
             ),
           ),
@@ -238,42 +282,63 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
     // todo: Add a layer to cover the dialog and show progress of the task
     // _formKey.currentState!.save();
     // print(_teacher.toMap());
-    if (!isLoading) {
+    if (!_isLoading) {
       setState(() {
-        isLoading = true;
+        _isLoading = true;
         showErrorMsg = false;
       });
 
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
 
+        // Sign teacher in with email and password
+        // Defualt password is the STAFFID of the teacher
         var authResult = await Auth.signUpWithEmailandPassword(
           email: _teacher.email,
           password: _teacher.staffId,
         );
+
         print(authResult);
         // todo: Check if the user is signed up first before you continue the next task
         var result = await FirestoreDB.addDocWithId(
-            'teachers', _teacher.toMap(), _teacher.staffId);
+          'teachers',
+          _teacher.toMap(),
+          _teacher.staffId,
+        );
         // todo: after saving the image, update the user feild
-        if (result != 'saved') {
+        if (result == 'saved') {
+          // save the image in the firebase storage
           var imageUrl = (profileImage != null)
-              ? await FirestoreDB.saveFile(profileImage, '/farmers/',
+              ? await FirestoreDB.saveFile(profileImage, '/teachers/',
                   _teacher.fullName()!.replaceAll(' ', '_'))
               : null;
+          Map<String, dynamic> uppdate = {"picture": imageUrl};
+          // update the teacher pictureURL field
+          await FirestoreDB.updateDoc(
+            'teachers',
+            _teacher.staffId,
+            uppdate,
+          );
+
           setState(() {
-            isLoading = false;
+            _isLoading = false;
             if (result != 'saved') {
               errMsg = result;
               showErrorMsg = true;
             }
           });
-        } else {
+          _isLoading = false;
           Navigator.of(context).pop();
+        } else {
+          setState(() {
+            _isLoading = false;
+            errMsg = result;
+            showErrorMsg = true;
+          });
         }
       } else {
         setState(() {
-          isLoading = false;
+          _isLoading = false;
           showErrorMsg = false;
         });
       }

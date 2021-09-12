@@ -38,6 +38,12 @@ class _ImageChooserState extends State<ImageChooser> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.width,
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 2,
+          color: Styles.primaryDarkColor.withOpacity(0.30),
+        ),
+      ),
       child: Center(
         child: GestureDetector(
           onTap: () {
@@ -73,8 +79,9 @@ class _ImageChooserState extends State<ImageChooser> {
                   )
                 : Container(
                     decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(5)),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     width: 150,
                     height: 150,
                     child: Stack(

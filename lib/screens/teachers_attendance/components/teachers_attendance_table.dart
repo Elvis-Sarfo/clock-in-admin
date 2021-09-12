@@ -148,22 +148,24 @@ class DataSource extends DataTableSource {
               },
             ),
           )
-        : SizedBox(
-            width: 250.0,
-            child: DefaultTextStyle(
-              style: const TextStyle(fontSize: 18.0, color: Colors.red),
-              child: AnimatedTextKit(
-                repeatForever: true,
-                animatedTexts: [
-                  ScaleAnimatedText(
-                    'Not Reported',
-                    duration: const Duration(milliseconds: 1000),
-                    scalingFactor: 0.7,
-                  ),
-                ],
-              ),
-            ),
-          );
+        : Text('Not Reported',
+            style: const TextStyle(fontSize: 18.0, color: Colors.red));
+    // SizedBox(
+    //     width: 250.0,
+    //     child: DefaultTextStyle(
+    //       style: const TextStyle(fontSize: 18.0, color: Colors.red),
+    //       child: AnimatedTextKit(
+    //         repeatForever: true,
+    //         animatedTexts: [
+    //           ScaleAnimatedText(
+    //             'Not Reported',
+    //             duration: const Duration(milliseconds: 1000),
+    //             scalingFactor: 0.7,
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
   }
 
   _attendanceLogContainer(int index, TeacherAttendance attendance) {
@@ -262,7 +264,9 @@ class DataSource extends DataTableSource {
               showDialog(
                 context: context!,
                 builder: (BuildContext context) {
-                  return ViewTeacherAttendanceDialog();
+                  return ViewTeacherAttendanceDialog(
+                    teacher: teacher,
+                  );
                 },
               );
             },

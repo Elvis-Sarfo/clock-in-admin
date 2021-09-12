@@ -4,6 +4,7 @@
 // default UI.
 
 import 'package:clock_in_admin/components/cus_text_form_field.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 
 class AutocompleteBasicExample extends StatelessWidget {
@@ -58,13 +59,16 @@ class AutocompleteBasicExample extends StatelessWidget {
 
   Widget _optionsViewBuilder(BuildContext context,
       AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+    Size size = MediaQuery.of(context).size;
     return Align(
       alignment: Alignment.topLeft,
       child: Material(
+        color: Styles.primaryColor,
+        textStyle: TextStyle(color: Colors.white),
         elevation: 4.0,
-        child: SizedBox(
-          height: 300.0,
-          width: 200.0,
+        child: Container(
+          height: 100.0,
+          width: double.infinity,
           child: ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: options.length,

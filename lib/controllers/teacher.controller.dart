@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clock_in_admin/models/teacher.dart';
-import 'package:clock_in_admin/services/database_services.dart';
 
 class TeacherController extends ChangeNotifier {
   final String collectionName = 'teachers';

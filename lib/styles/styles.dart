@@ -8,8 +8,8 @@ class Styles {
   // https://youtu.be/9NBBk10axME
 
   // COLORS
-  static const primaryColor = Color(0xFF051e34);
-  // static const primaryColor = Color(0xFF265878);
+  static const primaryDarkColor = Color(0xFF051e34);
+  static const primaryColor = Color(0xFF870A4F);
   static const secondaryColor = Color(0xFF265878);
   // static const secondaryColor = Color(0xFF3d8c95);
   static const complementaryColor = Color(0xFFE6873C);
@@ -21,16 +21,16 @@ class Styles {
 
   // TEXT STYLES
   static const h5 = TextStyle(
-    fontSize: 18,
+    fontSize: 14,
     height: 1.5,
-    color: Colors.white,
+    color: Styles.primaryColor,
     fontWeight: FontWeight.bold,
   );
 
   static const paragraph = TextStyle(
-    fontSize: 16,
+    fontSize: 18,
     height: 1.5,
-    color: Colors.white70,
+    color: Colors.black87,
     fontWeight: FontWeight.bold,
   );
 
@@ -46,7 +46,7 @@ class Styles {
   // BORDERS
   static final Border border = Border.all(
     width: 2,
-    color: Styles.primaryColor.withOpacity(0.20),
+    color: Styles.primaryDarkColor.withOpacity(0.20),
   );
 
   static const radius10 = const BorderRadius.all(Radius.circular(10));

@@ -42,8 +42,9 @@ class TeacherAttendanceController extends ChangeNotifier {
 
     _subscription = FirebaseFirestore.instance
         .collection(collectionName)
-        // .where('time', isGreaterThanOrEqualTo: lastMidnight)
-        .orderBy('teacherId')
+        .where('time', isGreaterThanOrEqualTo: lastMidnight)
+        // .orderBy('teacherId')
+        // .orderBy('time')
         .snapshots()
         .listen(
       (data) async {

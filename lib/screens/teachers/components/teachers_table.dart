@@ -4,6 +4,8 @@ import 'package:clock_in_admin/components/custom_switch.dart';
 import 'package:clock_in_admin/controllers/teacher.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/responsive.dart';
+import 'package:clock_in_admin/screens/teachers/update_teacher_dialog.dart';
+import 'package:clock_in_admin/services/database_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -174,8 +176,12 @@ class DataSource extends DataTableSource {
           ),
         ),
         // DataCell(Text('images')),
-        DataCell(Text(teacher.staffId!,
-            style: TextStyle(fontWeight: FontWeight.bold))),
+        DataCell(
+          Text(
+            teacher.staffId!,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
         DataCell(Text(teacher.fullName()!)),
         DataCell(Text(teacher.phone!)),
         DataCell(Text(teacher.residence!)),
@@ -183,7 +189,10 @@ class DataSource extends DataTableSource {
         DataCell(
           CustomSwitch(
             isSwitched: teacher.enabled ?? false,
-            onChanged: (value) async {},
+            onChanged: (value) async {
+              Map<String, dynamic> update = {'enabled': value};
+              await FirestoreDB.updateDoc('teachers', teacher.staffId, update);
+            },
           ),
         ),
         DataCell(
@@ -200,7 +209,9 @@ class DataSource extends DataTableSource {
                   showDialog(
                     context: context!,
                     builder: (BuildContext context) {
-                      return ViewTeacherDialog();
+                      return ViewTeacherDialog(
+                        teacher: teacher,
+                      );
                     },
                   );
                 },
@@ -213,15 +224,14 @@ class DataSource extends DataTableSource {
                 ),
                 tooltip: 'Edit',
                 onPressed: () {
-                  // showDialog(
-                  //   context: context!,
-                  //   builder: (BuildContext context) {
-                  //     return UpdateFarmer(
-                  //       farmer: farmer,
-                  //       farmerDocSnap: docSnapshot,
-                  //     );
-                  //   },
-                  // );
+                  showDialog(
+                    context: context!,
+                    builder: (BuildContext context) {
+                      return UpdateTeacherDialog(
+                        teacher: teacher,
+                      );
+                    },
+                  );
                 },
               ),
               IconButton(
@@ -255,12 +265,16 @@ class DataSource extends DataTableSource {
                                 ),
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
                               // deleteFarmer(docSnapshot.id);
-                              Navigator.of(context).pop();
+                              if (teacher.enabled != true) {
+                                await FirestoreDB.deleteDoc(
+                                    'teachers', teacher.staffId);
+                                Navigator.of(context).pop();
+                              }
                             },
                             child: Text(
-                              'Delete',
+                              'Yes, Delete',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18),
                             ),
@@ -268,7 +282,8 @@ class DataSource extends DataTableSource {
                           TextButton(
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Styles.primaryColor),
+                                Colors.green,
+                              ),
                               padding: MaterialStateProperty.all(
                                 EdgeInsets.symmetric(
                                   horizontal: 15,
@@ -280,7 +295,7 @@ class DataSource extends DataTableSource {
                               Navigator.of(context).pop();
                             },
                             child: Text(
-                              'Cancel',
+                              'No, Cancel',
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.white,

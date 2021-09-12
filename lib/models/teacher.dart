@@ -6,23 +6,26 @@ class Teacher {
       email,
       phone,
       picture,
+      department,
       subject,
       position,
       residence;
   bool? enabled;
 
-  Teacher(
-      {this.firstName,
-      this.lastName,
-      this.gender,
-      this.phone,
-      this.email,
-      this.picture,
-      this.subject,
-      this.position,
-      this.residence,
-      this.staffId,
-      this.enabled});
+  Teacher({
+    this.firstName,
+    this.lastName,
+    this.gender,
+    this.phone,
+    this.email,
+    this.picture,
+    this.department,
+    this.subject,
+    this.position,
+    this.residence,
+    this.staffId,
+    this.enabled = true,
+  });
 
   //convert from map object to teacher object
   Teacher.fromMapObject(Map<String, dynamic>? map) {
@@ -35,6 +38,9 @@ class Teacher {
     this.subject = map?['subject'];
     this.residence = map?['residence'];
     this.enabled = map?['enabled'];
+    this.picture = map?['picture'];
+    this.department = map?['department'];
+    this.position = map?['position'];
   }
 
   //convert from teacher object to map object
@@ -50,6 +56,8 @@ class Teacher {
     map['position'] = position;
     map['residence'] = residence;
     map['enabled'] = enabled;
+    map['picture'] = picture;
+    map['department'] = department;
 
     return map;
   }

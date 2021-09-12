@@ -1,5 +1,4 @@
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/screens/teachers/add_teacher_dialog.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 

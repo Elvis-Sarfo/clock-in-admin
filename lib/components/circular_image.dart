@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 
 class CircularImage extends StatelessWidget {
   final Image? child;
-  const CircularImage({Key? key, @required this.child}) : super(key: key);
+  final double width, height;
+  const CircularImage(
+      {Key? key, @required this.child, this.width = 50, this.height = 50})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 50,
-      height: 50,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         // borderRadius: BorderRadius.circular(100.0),

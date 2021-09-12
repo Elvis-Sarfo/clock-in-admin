@@ -23,8 +23,8 @@ class _CustomSwitchState extends State<CustomSwitch> {
           isSwitched = value;
         });
       },
-      activeTrackColor: Styles.primaryColor,
-      activeColor: Styles.primaryColor,
+      activeTrackColor: Colors.green[200],
+      activeColor: Colors.green,
     );
   }
 }
