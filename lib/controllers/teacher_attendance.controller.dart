@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:clock_in_admin/models/attendance.dart';
 import 'package:clock_in_admin/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +12,13 @@ class TeacherAttendanceController extends ChangeNotifier {
   int sortColumnIndex = 1;
   bool waiting = true, hasError = false, done = false, sortAscending = true;
 
+  int numOfPresentTeachers = 0;
+  int numOfAbsentTeachers = 0;
+  int numOfTeachersOnCampus = 0;
+  int numOfTeachersOutCampus = 0;
+  int totalNumOfTeachers = 0;
+
+  // contrusctor
   TeacherAttendanceController({this.context}) {
     streamTeachersAttendanceData();
   }
@@ -19,7 +27,7 @@ class TeacherAttendanceController extends ChangeNotifier {
 
   @override
   void dispose() {
-    _unsubscribe();
+    _unsubscribe(_subscription);
     super.dispose();
   }
 
@@ -27,64 +35,36 @@ class TeacherAttendanceController extends ChangeNotifier {
     var now = DateTime.now();
     var lastMidnight =
         DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
-    // Consumer(builder: builder)
-    // var _teachers = context!.read<TeacherController>().streamTeachersData();
-    // var __teachers = context!.watch<TeacherController>().streamTeachersData();
-    // var _teacherss = context!.read()<TeacherController>().getFilteredTeachers;
-
-    // var tc = TeacherController();
-    // var _t = Provider.of<TeacherController>(context!, listen: false)
-    //     .getFilteredTeachers;
 
     // Get teacher in the database
     var _teachersSnap = await FirestoreDB.getAll('teachers');
     var _teachers = _teachersSnap.docs.toList();
 
+    // get the total number of teachers in the database
+    totalNumOfTeachers = _teachers.length;
+
     _subscription = FirebaseFirestore.instance
         .collection(collectionName)
         .where('time', isGreaterThanOrEqualTo: lastMidnight)
         // .orderBy('teacherId')
-        // .orderBy('time')
+        .orderBy('time')
         .snapshots()
         .listen(
       (data) async {
         var _data = data.docs.toList();
         Map<String, dynamic> at = Map();
 
-        var _maxIterations =
-            _teachers.length > _data.length ? _teachers.length : _data.length;
+        /// Generate attendance log
+        generateAttendanceLog(_teachers, _data, at);
+        attendanceSummary(at);
 
-        for (var i = 0; i < _maxIterations; i++) {
-          var att, _key;
-
-          if (_data.length > i) {
-            att = _data[i].data();
-            _key = att!['teacherId'];
-          }
-
-          if (_teachers.length > i && !at.containsKey(_teachers[i].id)) {
-            at[_teachers[i].id] = {
-              'details': _teachers[i].data(),
-              'clocks': []
-            };
-          } else if (_teachers.length > i && at.containsKey(_teachers[i].id)) {
-            at[_teachers[i].id]['details'] = _teachers[i].data();
-          }
-
-          if (att != null && !at.containsKey(_key)) {
-            at[_key] = {
-              'details': <String, dynamic>{},
-              'clocks': [att]
-            };
-          } else if (att != null && at.containsKey(_key)) {
-            at[_key]['clocks'].add(att);
-          }
-        }
-
-        print(at);
+        // print(at);
         _attendance = at;
         waiting = false;
         notifyListeners();
+
+        // attendanceSummary(at);
+        // notifyListeners();
       },
       onError: (Object error, StackTrace stackTrace) {
         hasError = true;
@@ -97,7 +77,79 @@ class TeacherAttendanceController extends ChangeNotifier {
     );
   }
 
-  void _unsubscribe() {
+  void generateAttendanceLog(List<QueryDocumentSnapshot> _teachers,
+      List<QueryDocumentSnapshot> _data, Map<String, dynamic> at) {
+    /// Get the maximum number of iterations to be done
+    /// Thisis done by comparing the lenght of the teachers list and the lenght
+    /// of the teacher attendance list then return the lenght of the greater one
+    var _maxIterations =
+        _teachers.length > _data.length ? _teachers.length : _data.length;
+
+    /// The loop starts here
+    for (var i = 0; i < _maxIterations; i++) {
+      // The att and the _key variable will hold the current attendance data in the list
+      // and the staffId respectively
+      var att, _key;
+
+      /// Check if the attendance list is greater than the loops counter before
+      /// assigning values to variable
+      /// This is done to make sure that we dont access undefined elements in the list
+      if (_data.length > i) {
+        att = _data[i].data();
+        _key = att!['teacherId'];
+      }
+
+      /// Check if the lennght of teachers list is greater than the loop counter
+      /// to prevent accessing undefined items from the teachers list.
+      /// Again, check if the final Map does not contain the key already
+      if (_teachers.length > i && !at.containsKey(_teachers[i].id)) {
+        /// Create a new map item with the staffId as the key a nested map as the content
+        /// The nested map contains two items, the [details] key: which will have the teacher
+        /// data as its content. And a [clocks] key which will contain the list of clocks or attendance
+        /// Note: the clocks can be an empty List
+        at[_teachers[i].id] = {'details': _teachers[i].data(), 'clocks': []};
+        // ++numOfAbsentTeachers;
+      } else if (_teachers.length > i && at.containsKey(_teachers[i].id)) {
+        at[_teachers[i].id]['details'] = _teachers[i].data();
+      }
+
+      if (att != null && !at.containsKey(_key)) {
+        at[_key] = {
+          'details': <String, dynamic>{},
+          'clocks': [att]
+        };
+        // ++numOfPresentTeachers;
+        // if (att['type'] == 'in')
+        //   ++numOfTeachersOnCampus;
+        // else
+        //   ++numOfTeachersOutCampus;
+      } else if (att != null && at.containsKey(_key)) {
+        at[_key]['clocks'].add(att);
+
+        // if (att['type'] == 'in')
+        //   ++numOfTeachersOnCampus;
+        // else
+        //   ++numOfTeachersOutCampus;
+      }
+    }
+  }
+
+  attendanceSummary(Map<String, dynamic> attendanceLog) {
+    attendanceLog.forEach((key, value) {
+      if (value['clocks'].length == 0) {
+        ++numOfAbsentTeachers;
+      } else {
+        ++numOfPresentTeachers;
+        if (value['clocks'].last['type'] == 'in') {
+          ++numOfTeachersOnCampus;
+        } else {
+          ++numOfTeachersOutCampus;
+        }
+      }
+    });
+  }
+
+  void _unsubscribe(_subscription) {
     _subscription!.cancel();
   }
 

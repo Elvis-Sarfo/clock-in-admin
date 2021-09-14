@@ -1,9 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:clock_in_admin/components/circular_image.dart';
+import 'package:clock_in_admin/components/shimmer_effect.dart';
 import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/models/teacher_attendance.dart';
-import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,13 @@ import 'package:provider/provider.dart';
 import '../view_teacher_attendance_dialog.dart';
 
 class TeachersAttendancesTable extends StatelessWidget {
+  final int rowsPerPage;
+  final String title;
+  final bool showActions;
   const TeachersAttendancesTable({
+    this.rowsPerPage = 7,
+    this.showActions = true,
+    this.title = '',
     Key? key,
   }) : super(key: key);
 
@@ -45,61 +51,80 @@ class TeachersAttendancesTable extends StatelessWidget {
                 );
               }
               if (attendanceState.waiting) {
-                return Padding(
-                  padding: const EdgeInsets.all(100.0),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+                return ShimmerEffect.rectangular(height: 480);
               }
               return PaginatedDataTable(
                 header: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "List of Teachers Attendance for today",
+                      this.title,
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    ElevatedButton.icon(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Styles.defaultPadding * 1.5,
-                          vertical: Styles.defaultPadding /
-                              (Responsive.isMobile(context) ? 2 : 1),
-                        ),
-                      ),
-                      onPressed: () {},
-                      icon: Icon(Icons.add),
-                      label: Text("Add A Search"),
-                    ),
+                    // ElevatedButton.icon(
+                    //   style: TextButton.styleFrom(
+                    //     padding: EdgeInsets.symmetric(
+                    //       horizontal: Styles.defaultPadding * 1.5,
+                    //       vertical: Styles.defaultPadding /
+                    //           (Responsive.isMobile(context) ? 2 : 1),
+                    //     ),
+                    //   ),
+                    //   onPressed: () {},
+                    //   icon: Icon(Icons.add),
+                    //   label: Text("Add A Search"),
+                    // ),
                   ],
                 ),
                 onSelectAll: (b) {},
-                rowsPerPage: 7,
+                rowsPerPage: this.rowsPerPage,
                 horizontalMargin: 5,
                 columnSpacing: 5,
                 columns: <DataColumn>[
-                  DataColumn(
-                    label: Text(
-                      'Action',
-                      // textAlign: TextAlign.center,
+                  if (showActions)
+                    DataColumn(
+                      label: Text(
+                        'Action',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        // textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
                   DataColumn(
                     label: Text(''),
                   ),
                   DataColumn(
-                    label: Text('Staff Id'),
+                    label: Text(
+                      'Staff Id',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                   DataColumn(
-                    label: Text('Name'),
+                    label: Text(
+                      'Name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                   DataColumn(
-                    label: Text('Attendance Log'),
+                    label: Text(
+                      'Attendance Log',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
                   ),
                 ],
-                source:
-                    DataSource(attendanceState.getTeachersAttendance, context),
+                source: DataSource(
+                    attendanceState.getTeachersAttendance, context,
+                    options: {'showActions': showActions}),
               );
             },
           ),
@@ -110,10 +135,10 @@ class TeachersAttendancesTable extends StatelessWidget {
 }
 
 class DataSource extends DataTableSource {
-  Map<String, dynamic>? iterable;
+  Map<String, dynamic>? iterable, options;
   BuildContext? context;
   // Constructor
-  DataSource(this.iterable, this.context);
+  DataSource(this.iterable, this.context, {this.options});
 
   Widget _buildAttendanceLogWidget(List clocks) {
     clocks.sort((a, b) {
@@ -127,19 +152,24 @@ class DataSource extends DataTableSource {
                 TeacherAttendance attendance =
                     TeacherAttendance.fromMapObject(clocks[index]);
                 if (index == 3) {
-                  return SizedBox(
-                    width: 50.0,
-                    child: DefaultTextStyle(
-                      style: const TextStyle(
-                        fontSize: 32.0,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black45,
+                  return FittedBox(
+                    fit: BoxFit.contain,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 5,
                       ),
-                      child: AnimatedTextKit(
-                        repeatForever: true,
-                        animatedTexts: [
-                          TyperAnimatedText('...'),
-                        ],
+                      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          shape: BoxShape.rectangle,
+                          color: Colors.grey.shade300,
+                          border: Border.all(color: Colors.black45, width: 1)),
+                      child: Text(
+                        '+${clocks.length - 3}',
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54),
                       ),
                     ),
                   );
@@ -220,16 +250,16 @@ class DataSource extends DataTableSource {
                     Text(
                       attendance.type!.toUpperCase(),
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54),
                     ),
                   Text(
                     Utils.convertMillSecsToDateString(attendance.time!),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.black54,
                     ),
                   ),
                 ],
@@ -252,26 +282,27 @@ class DataSource extends DataTableSource {
       selected: selected,
       index: index,
       cells: <DataCell>[
-        DataCell(
-          IconButton(
-            icon: const Icon(
-              Icons.remove_red_eye,
-              color: Styles.primaryColor,
+        if (this.options?['showActions'])
+          DataCell(
+            IconButton(
+              icon: const Icon(
+                Icons.remove_red_eye,
+                color: Styles.primaryColor,
+              ),
+              tooltip: 'View',
+              splashRadius: 20,
+              onPressed: () {
+                showDialog(
+                  context: context!,
+                  builder: (BuildContext context) {
+                    return ViewTeacherAttendanceDialog(
+                      teacher: teacher,
+                    );
+                  },
+                );
+              },
             ),
-            tooltip: 'View',
-            splashRadius: 20,
-            onPressed: () {
-              showDialog(
-                context: context!,
-                builder: (BuildContext context) {
-                  return ViewTeacherAttendanceDialog(
-                    teacher: teacher,
-                  );
-                },
-              );
-            },
           ),
-        ),
         // IMAGE DATA CELL
         DataCell(
           Padding(

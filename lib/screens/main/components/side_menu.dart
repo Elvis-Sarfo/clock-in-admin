@@ -18,66 +18,61 @@ class SideMenu extends StatelessWidget {
     return Drawer(
       child: Stack(children: [
         Image.asset("assets/images/nav_nachos@2x.png", height: double.infinity),
-        SingleChildScrollView(
-          // it enables scrolling
-          child: Column(
-            children: [
-              DrawerHeader(
-                child: Image.asset("assets/images/logo.png"),
-              ),
-              DrawerListTile(
-                title: "Dashbord",
-                leadingIcon: Icons.group,
-                press: () {
-                  context
-                      .read<PageRouteController>()
-                      .navigate(DashboardScreen());
-                  if (!Responsive.isDesktop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-              DrawerListTile(
-                title: "Attendance",
-                leadingIcon: Icons.update,
-                press: () {
-                  context.read<PageRouteController>().navigate(
-                      TeachersAttendanceScreen(),
-                      title: 'Teachers Attendance');
-                  if (!Responsive.isDesktop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-              DrawerListTile(
-                title: "Teacher",
-                leadingIcon: Icons.people,
-                press: () {
-                  context
-                      .read<PageRouteController>()
-                      .navigate(TeachersScreen(), title: 'Teachers');
-                  if (!Responsive.isDesktop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-              ),
-              DrawerListTile(
-                title: "Students",
-                leadingIcon: Icons.group,
-                press: () {},
-              ),
-              DrawerListTile(
-                title: "Profile",
-                leadingIcon: Icons.person,
-                press: () {},
-              ),
-              DrawerListTile(
-                title: "Settings",
-                leadingIcon: Icons.settings,
-                press: () {},
-              ),
-            ],
-          ),
+        Column(
+          children: [
+            DrawerHeader(
+              child: Image.asset("assets/images/logo.png"),
+            ),
+            DrawerListTile(
+              title: "Dashbord",
+              leadingIcon: Icons.group,
+              press: () {
+                context.read<PageRouteController>().navigate(DashboardScreen());
+                if (!Responsive.isDesktop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+            DrawerListTile(
+              title: "Attendance",
+              leadingIcon: Icons.update,
+              press: () {
+                context.read<PageRouteController>().navigate(
+                    TeachersAttendanceScreen(),
+                    title: 'Teachers Attendance');
+                if (!Responsive.isDesktop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+            DrawerListTile(
+              title: "Teacher",
+              leadingIcon: Icons.people,
+              press: () {
+                context
+                    .read<PageRouteController>()
+                    .navigate(TeachersScreen(), title: 'Teachers');
+                if (!Responsive.isDesktop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
+            DrawerListTile(
+              title: "Students",
+              leadingIcon: Icons.group,
+              press: () {},
+            ),
+            DrawerListTile(
+              title: "Profile",
+              leadingIcon: Icons.person,
+              press: () {},
+            ),
+            DrawerListTile(
+              title: "Settings",
+              leadingIcon: Icons.settings,
+              press: () {},
+            ),
+          ],
         ),
       ]),
     );

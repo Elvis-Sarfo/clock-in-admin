@@ -8,8 +8,8 @@ class PageRouteController extends ChangeNotifier {
 
   GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
 
-  // Widget _route = DashboardScreen();
-  Widget _route = TeachersScreen();
+  Widget _route = DashboardScreen();
+  // Widget _route = TeachersScreen();
   Widget get route => _route;
 
   String _pageTitle = '';

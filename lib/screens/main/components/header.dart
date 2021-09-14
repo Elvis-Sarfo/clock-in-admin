@@ -1,3 +1,4 @@
+import 'package:clock_in_admin/components/date_time.dart';
 import 'package:clock_in_admin/controllers/menu.controller.dart';
 import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/responsive.dart';
@@ -30,7 +31,10 @@ class Header extends StatelessWidget {
         children: [
           if (!Responsive.isDesktop(context))
             IconButton(
-              icon: Icon(Icons.menu),
+              icon: Icon(
+                Icons.menu,
+                color: Styles.primaryColor,
+              ),
               onPressed: context.read<MenuController>().controlMenu,
             ),
           Text(
@@ -41,6 +45,7 @@ class Header extends StatelessWidget {
           //   Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
           // Expanded(child: SearchField()),
           Spacer(),
+          // DateTimeWidget(),
           ProfileCard()
         ],
       ),

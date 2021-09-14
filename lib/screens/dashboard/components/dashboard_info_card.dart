@@ -1,24 +1,22 @@
-import 'package:clock_in_admin/models/MyFiles.dart';
+import 'package:clock_in_admin/models/card_info.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class FileInfoCard extends StatelessWidget {
-  const FileInfoCard({
+class DashboardInfoCard extends StatelessWidget {
+  const DashboardInfoCard({
     Key? key,
     required this.info,
   }) : super(key: key);
 
-  final CloudStorageInfo info;
+  final CardInfo info;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(Styles.defaultPadding),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
+      decoration: Styles.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -27,49 +25,56 @@ class FileInfoCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: EdgeInsets.all(Styles.defaultPadding * 0.75),
-                height: 40,
-                width: 40,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Styles.defaultPadding * 0.5,
+                  vertical: 0,
+                ),
+                // height: 40,
+                // width: 40,
                 decoration: BoxDecoration(
                   color: info.color!.withOpacity(0.1),
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
-                child: SvgPicture.asset(
-                  info.svgSrc ?? '',
-                  color: info.color,
+                child: Text(
+                  '${info.percentage?.toStringAsFixed(2) ?? 0}%',
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black54),
                 ),
               ),
-              Icon(Icons.more_vert, color: Colors.white54)
+              Icon(Icons.more_vert, color: Colors.black54)
             ],
           ),
           Text(
             info.title ?? '',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54),
           ),
           ProgressLine(
             color: info.color,
             percentage: info.percentage ?? 0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "${info.numOfFiels} Files",
-                style: Theme.of(context)
-                    .textTheme
-                    .caption!
-                    .copyWith(color: Colors.white70),
-              ),
-              Text(
-                info.totalStorage ?? '',
-                style: Theme.of(context)
-                    .textTheme
-                    .caption!
-                    .copyWith(color: Colors.white),
-              ),
-            ],
-          )
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "${info.numOfFiels} ",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: "out of "),
+                TextSpan(
+                  text: "${info.totalNumOfTeachers} ",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: "teachers"),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -84,7 +89,7 @@ class ProgressLine extends StatelessWidget {
   }) : super(key: key);
 
   final Color? color;
-  final int percentage;
+  final double percentage;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +99,7 @@ class ProgressLine extends StatelessWidget {
           width: double.infinity,
           height: 5,
           decoration: BoxDecoration(
-            color: color!.withOpacity(0.1),
+            color: color!.withOpacity(0.3),
             borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
         ),
