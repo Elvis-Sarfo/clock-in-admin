@@ -4,14 +4,40 @@ import 'package:clock_in_admin/controllers/student.controller.dart';
 import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
 import 'package:clock_in_admin/controllers/teacher.controller.dart';
 import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
+import 'package:clock_in_admin/screens/auth/login/login.dart';
 import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MenuController>(
+          create: (context) => MenuController(),
+        ),
+        ChangeNotifierProvider<PageRouteController>(
+          create: (context) => PageRouteController(),
+        ),
+        ChangeNotifierProvider<TeacherController>(
+          create: (context) => TeacherController(),
+        ),
+        ChangeNotifierProvider<TeacherAttendanceController>(
+          create: (context) => TeacherAttendanceController(context: context),
+        ),
+        ChangeNotifierProvider<StudentController>(
+          create: (context) => StudentController(),
+        ),
+        ChangeNotifierProvider<StudentAttendanceController>(
+          create: (context) => StudentAttendanceController(context: context),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,29 +54,7 @@ class MyApp extends StatelessWidget {
         canvasColor: Styles.primaryColor,
         cardTheme: CardTheme(color: Styles.secondaryColor),
       ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider<MenuController>(
-            create: (context) => MenuController(),
-          ),
-          ChangeNotifierProvider<PageRouteController>(
-            create: (context) => PageRouteController(),
-          ),
-          ChangeNotifierProvider<TeacherController>(
-            create: (context) => TeacherController(),
-          ),
-          ChangeNotifierProvider<TeacherAttendanceController>(
-            create: (context) => TeacherAttendanceController(context: context),
-          ),
-          ChangeNotifierProvider<StudentController>(
-            create: (context) => StudentController(),
-          ),
-          ChangeNotifierProvider<StudentAttendanceController>(
-            create: (context) => StudentAttendanceController(context: context),
-          ),
-        ],
-        child: MainScreen(),
-      ),
+      home: FirebaseAuth.instance.currentUser == null ? Login() : MainScreen(),
     );
   }
 }

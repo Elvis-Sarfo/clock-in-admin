@@ -50,6 +50,11 @@ class Styles {
     color: Styles.primaryDarkColor.withOpacity(0.20),
   );
 
+  static final Border errorBorder = Border.all(
+    width: 2,
+    color: Styles.primaryDarkColor.withOpacity(0.20),
+  );
+
   static const radius10 = const BorderRadius.all(Radius.circular(10));
 
   // CARD
@@ -65,6 +70,13 @@ class Styles {
     borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
     border: border,
+    boxShadow: cardShadow,
+  );
+
+  static final errorCardDecoration = BoxDecoration(
+    color: Colors.red.shade100,
+    borderRadius: radius10,
+    border: errorBorder,
     boxShadow: cardShadow,
   );
 }

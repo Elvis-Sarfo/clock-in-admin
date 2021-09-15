@@ -26,10 +26,12 @@ class SideMenu extends StatelessWidget {
               child: Image.asset("assets/images/logo.png"),
             ),
             DrawerListTile(
-              title: "Dashbord",
+              title: "Dashboard",
               leadingIcon: Icons.group,
               press: () {
-                context.read<PageRouteController>().navigate(DashboardScreen());
+                context
+                    .read<PageRouteController>()
+                    .navigate(DashboardScreen(), title: 'Dashboard');
                 if (!Responsive.isDesktop(context)) {
                   Navigator.pop(context);
                 }

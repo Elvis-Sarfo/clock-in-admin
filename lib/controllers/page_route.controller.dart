@@ -13,6 +13,13 @@ class PageRouteController extends ChangeNotifier {
   String _pageTitle = 'Dashboard';
   String get pageTitle => _pageTitle;
 
+  String _adminUsername = 'Admin';
+  String get adminUsername => _adminUsername;
+  void setAdminUsername(String username) {
+    _adminUsername = username;
+    notifyListeners();
+  }
+
   void navigate(Widget page, {String title = ''}) {
     _route = page;
     _pageTitle = title;

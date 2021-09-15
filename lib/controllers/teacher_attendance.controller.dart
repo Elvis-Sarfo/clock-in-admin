@@ -53,6 +53,11 @@ class TeacherAttendanceController extends ChangeNotifier {
         var _data = data.docs.toList();
         Map<String, dynamic> at = Map();
 
+        numOfPresentTeachers = 0;
+        numOfAbsentTeachers = 0;
+        numOfTeachersOnCampus = 0;
+        numOfTeachersOutCampus = 0;
+
         /// Generate attendance log
         generateAttendanceLog(_teachers, _data, at);
         attendanceSummary(at);

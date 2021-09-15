@@ -9,6 +9,7 @@ import 'package:clock_in_admin/screens/students/add_student_dialog.dart';
 import 'package:clock_in_admin/screens/students/update_student_dialog.dart';
 import 'package:clock_in_admin/services/database_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_student_dialog.dart';
@@ -249,12 +250,36 @@ class DataSource extends DataTableSource {
                               ),
                             ),
                             onPressed: () async {
-                              // deleteFarmer(docSnapshot.id);
                               if (student.enabled != true) {
                                 await FirestoreDB.deleteDoc(
                                   'students',
                                   student.id,
                                 );
+
+                                // creates the collection reference of the student log
+                                final CollectionReference studentClocks =
+                                    FirebaseFirestore.instance
+                                        .collection('student_clocks');
+
+                                // Get the student  attendance log datafrom the databse using the old staffID
+                                var snapshot = await studentClocks
+                                    .where('studentId', isEqualTo: student.id)
+                                    .orderBy('time', descending: true)
+                                    .get();
+
+                                if (snapshot.docs.isNotEmpty) {
+                                  /// Use a batch to update all the documents that returns
+                                  WriteBatch writeBatch =
+                                      FirebaseFirestore.instance.batch();
+                                  snapshot.docs.forEach((doc) async {
+                                    var docRef = studentClocks.doc(doc.id);
+                                    writeBatch.delete(docRef);
+                                  });
+
+                                  // Comit the batch operation in the database.
+                                  await writeBatch.commit();
+                                  print('All the docs are deleted');
+                                }
                                 Navigator.of(context).pop();
                               }
                             },

@@ -147,7 +147,9 @@ class ProfileCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: Styles.defaultPadding / 2),
-              child: Text("Admin"),
+              child: Text(
+                context.watch<PageRouteController>().adminUsername,
+              ),
             ),
           Icon(
             Icons.keyboard_arrow_down,

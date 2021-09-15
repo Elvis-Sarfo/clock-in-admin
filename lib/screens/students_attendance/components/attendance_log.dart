@@ -91,13 +91,17 @@ class ExpandableListItem extends StatelessWidget {
             width: 20.0,
             decoration: BoxDecoration(
                 color: latestClock != null
-                    ? latestClock.type == 'in'
-                        ? Colors.green
-                        : Colors.grey
+                    // ? latestClock.type == 'in'
+                    ? Colors.green
+                    // : Styles.complementaryColor
                     : Colors.red,
                 borderRadius: BorderRadius.circular(20.0)),
             child: Icon(
-              latestClock?.type == 'in' ? Icons.check_outlined : Icons.close,
+              latestClock != null
+                  // ? latestClock.type == 'in'
+                  ? Icons.local_parking_outlined // Icons.check_outlined
+                  // : Icons.close
+                  : Icons.hdr_auto_outlined,
               color: Colors.white,
               size: 12.0,
             ),
