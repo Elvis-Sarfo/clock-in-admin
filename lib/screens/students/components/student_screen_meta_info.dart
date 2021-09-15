@@ -1,10 +1,10 @@
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/screens/teachers/add_teacher_dialog.dart';
+import 'package:clock_in_admin/screens/students/add_student_dialog.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 
-class TeacherScreenMetaInfo extends StatelessWidget {
-  const TeacherScreenMetaInfo({
+class StudentScreenMetaInfo extends StatelessWidget {
+  const StudentScreenMetaInfo({
     Key? key,
   }) : super(key: key);
 
@@ -35,7 +35,7 @@ class TeacherScreenMetaInfo extends StatelessWidget {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => AddTeacherDialog(),
+                  builder: (context) => AddStudentDialog(),
                 );
               },
               icon: Icon(Icons.add),

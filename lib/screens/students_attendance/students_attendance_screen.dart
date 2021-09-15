@@ -2,9 +2,9 @@ import 'package:clock_in_admin/components/attendance_charts/attendance_charts.da
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
-import 'components/teachers_attendance_table.dart';
+import 'components/students_attendance_table.dart';
 
-class TeachersAttendanceScreen extends StatelessWidget {
+class StudentsAttendanceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,8 +22,8 @@ class TeachersAttendanceScreen extends StatelessWidget {
                     children: [
                       // Table to display the list of teachers in a table
                       // This widget will be in the tree always
-                      TeachersAttendancesTable(
-                        title: 'Teacher Atendace Log for Today',
+                      StudentsAttendancesTable(
+                        title: 'Student Atendace Log for Today',
                       ),
                       // Leave a space between the table and the next widget if the screen is in mobile mode or size
                       if (Responsive.isMobile(context))

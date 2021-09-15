@@ -1,22 +1,22 @@
 import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/shimmer_effect.dart';
-import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
-import 'package:clock_in_admin/models/teacher.dart';
-import 'package:clock_in_admin/models/teacher_attendance.dart';
+import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
+import 'package:clock_in_admin/models/student.dart';
+import 'package:clock_in_admin/models/student_attendance.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../view_teacher_attendance_dialog.dart';
+import '../view_student_attendance_dialog.dart';
 
-class TeachersAttendancesTable extends StatelessWidget {
+class StudentsAttendancesTable extends StatelessWidget {
   final int rowsPerPage;
   final String title;
   final bool showActions, isTabbed;
-  const TeachersAttendancesTable({
+  const StudentsAttendancesTable({
     this.rowsPerPage = 7,
     this.showActions = true,
-    this.isTabbed = false,
+    this.isTabbed = true,
     this.title = '',
     Key? key,
   }) : super(key: key);
@@ -42,7 +42,7 @@ class TeachersAttendancesTable extends StatelessWidget {
               shadowColor: Colors.transparent,
             ),
           ),
-          child: Consumer<TeacherAttendanceController>(
+          child: Consumer<StudentAttendanceController>(
             builder: (context, attendanceState, child) {
               if (attendanceState.hasError) {
                 return Padding(
@@ -62,18 +62,6 @@ class TeachersAttendancesTable extends StatelessWidget {
                             this.title,
                             style: Theme.of(context).textTheme.headline6,
                           ),
-                          // ElevatedButton.icon(
-                          //   style: TextButton.styleFrom(
-                          //     padding: EdgeInsets.symmetric(
-                          //       horizontal: Styles.defaultPadding * 1.5,
-                          //       vertical: Styles.defaultPadding /
-                          //           (Responsive.isMobile(context) ? 2 : 1),
-                          //     ),
-                          //   ),
-                          //   onPressed: () {},
-                          //   icon: Icon(Icons.add),
-                          //   label: Text("Add A Search"),
-                          // ),
                         ],
                       )
                     : null,
@@ -125,7 +113,7 @@ class TeachersAttendancesTable extends StatelessWidget {
                   ),
                 ],
                 source: DataSource(
-                    attendanceState.getTeachersAttendance, context,
+                    attendanceState.getStudentsAttendance, context,
                     options: {'showActions': showActions}),
               );
             },
@@ -151,8 +139,8 @@ class DataSource extends DataTableSource {
             children: List.generate(
               clocks.length > 3 ? 4 : clocks.length,
               (index) {
-                TeacherAttendance attendance =
-                    TeacherAttendance.fromMapObject(clocks[index]);
+                StudentAttendance attendance =
+                    StudentAttendance.fromMapObject(clocks[index]);
                 if (index == 3) {
                   return FittedBox(
                     fit: BoxFit.contain,
@@ -182,25 +170,9 @@ class DataSource extends DataTableSource {
           )
         : Text('Not Reported',
             style: const TextStyle(fontSize: 18.0, color: Colors.red));
-    // SizedBox(
-    //     width: 250.0,
-    //     child: DefaultTextStyle(
-    //       style: const TextStyle(fontSize: 18.0, color: Colors.red),
-    //       child: AnimatedTextKit(
-    //         repeatForever: true,
-    //         animatedTexts: [
-    //           ScaleAnimatedText(
-    //             'Not Reported',
-    //             duration: const Duration(milliseconds: 1000),
-    //             scalingFactor: 0.7,
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   );
   }
 
-  _attendanceLogContainer(int index, TeacherAttendance attendance) {
+  _attendanceLogContainer(int index, StudentAttendance attendance) {
     var _isLatestClock = index == 0;
     var _isClockedIn = attendance.type == 'in';
     return FittedBox(
@@ -276,7 +248,7 @@ class DataSource extends DataTableSource {
   DataRow getRow(int index) {
     var _key = iterable!.keys.toList()[index];
     var item = iterable![_key];
-    Teacher? teacher = Teacher.fromMapObject(item['details']);
+    Student? student = Student.fromMapObject(item['details']);
     late Widget? attendanceLog = _buildAttendanceLogWidget(item['clocks']);
 
     bool selected = false;
@@ -297,8 +269,8 @@ class DataSource extends DataTableSource {
                 showDialog(
                   context: context!,
                   builder: (BuildContext context) {
-                    return ViewTeacherAttendanceDialog(
-                      teacher: teacher,
+                    return ViewStudentAttendanceDialog(
+                      student: student,
                     );
                   },
                 );
@@ -310,15 +282,15 @@ class DataSource extends DataTableSource {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
-              child: teacher.picture != null
+              child: student.picture != null
                   ? CircularImage(
-                      child: Image.network(teacher.picture!),
+                      child: Image.network(student.picture!),
                     )
                   : CircularImage(
                       child: Image.asset(
-                        teacher.gender?.toLowerCase() == 'male'
-                            ? 'assets/images/teacher_male-no-bg.png'
-                            : 'assets/images/teacher-female-no-bg.png',
+                        student.gender?.toLowerCase() == 'male'
+                            ? 'assets/images/student_male-no-bg.png'
+                            : 'assets/images/student-female-no-bg.png',
                       ),
                     ),
               alignment: Alignment.center,
@@ -326,9 +298,9 @@ class DataSource extends DataTableSource {
           ),
         ),
         // DataCell(Text('images')),
-        DataCell(Text(teacher.staffId ?? '',
+        DataCell(Text(student.id ?? '',
             style: TextStyle(fontWeight: FontWeight.bold))),
-        DataCell(Text(teacher.fullName() ?? '')),
+        DataCell(Text(student.fullName() ?? '')),
         DataCell(attendanceLog),
       ],
     );

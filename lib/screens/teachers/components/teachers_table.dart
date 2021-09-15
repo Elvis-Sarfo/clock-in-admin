@@ -10,6 +10,7 @@ import 'package:clock_in_admin/services/database_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../add_teacher_dialog.dart';
 import '../view_teacher_dialog.dart';
 
 class TeachersTable extends StatelessWidget {
@@ -59,15 +60,21 @@ class TeachersTable extends StatelessWidget {
                     ),
                     ElevatedButton.icon(
                       style: TextButton.styleFrom(
+                        backgroundColor: Styles.complementaryColor,
                         padding: EdgeInsets.symmetric(
                           horizontal: Styles.defaultPadding * 1.5,
                           vertical: Styles.defaultPadding /
                               (Responsive.isMobile(context) ? 2 : 1),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddTeacherDialog(),
+                        );
+                      },
                       icon: Icon(Icons.add),
-                      label: Text("Add New"),
+                      label: Text("Add New Teacher"),
                     ),
                   ],
                 ),

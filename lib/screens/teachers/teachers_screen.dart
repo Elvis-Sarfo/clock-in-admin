@@ -1,3 +1,5 @@
+import 'package:clock_in_admin/components/attendance_charts/attendance_charts.dart';
+import 'package:clock_in_admin/models/teacher_attendance.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +30,7 @@ class TeachersScreen extends StatelessWidget {
                         SizedBox(height: Styles.defaultPadding),
                       // Add the MetaInfo widget to the column if the device is a mobile
                       if (Responsive.isMobile(context))
-                        TeacherScreenMetaInfo(
-                          key: null,
-                        ),
+                        TeachersAttendanceChat(),
                     ],
                   ),
                 ),
@@ -41,7 +41,7 @@ class TeachersScreen extends StatelessWidget {
                 if (!Responsive.isMobile(context))
                   Expanded(
                     flex: 2,
-                    child: TeacherScreenMetaInfo(),
+                    child: TeachersAttendanceChat(),
                   ),
               ],
             )

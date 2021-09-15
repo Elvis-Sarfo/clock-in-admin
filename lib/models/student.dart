@@ -1,6 +1,7 @@
 class Student {
   String? id, firstName, lastName, gender, picture, course, position, residence;
   Map<String, dynamic>? guardian;
+  bool? enabled;
 
   Student({
     this.id,
@@ -12,19 +13,21 @@ class Student {
     this.position,
     this.residence,
     this.guardian,
+    this.enabled = true,
   });
 
   //convert from map object to teacher object
-  Student.fromMapObject(Map<String, dynamic> map) {
-    this.id = map['id'];
-    this.firstName = map['firstName'];
-    this.lastName = map['lastName'];
-    this.gender = map['gender'];
-    this.picture = map['picture'];
-    this.course = map['course'];
-    this.position = map['position'];
-    this.residence = map['residence'];
-    this.guardian = map['guardian'];
+  Student.fromMapObject(Map<String, dynamic>? map) {
+    this.id = map?['id'];
+    this.firstName = map?['firstName'];
+    this.lastName = map?['lastName'];
+    this.gender = map?['gender'];
+    this.picture = map?['picture'];
+    this.course = map?['course'];
+    this.position = map?['position'];
+    this.residence = map?['residence'];
+    this.guardian = map?['guardian'];
+    this.enabled = map?['enabled'];
   }
 
   //convert from teacher object to map object
@@ -39,6 +42,7 @@ class Student {
     map['position'] = position;
     map['residence'] = residence;
     map['guardian'] = guardian;
+    map['enabled'] = enabled;
     // returns a map
     return map;
   }

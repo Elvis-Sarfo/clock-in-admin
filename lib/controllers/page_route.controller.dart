@@ -1,6 +1,4 @@
 import 'package:clock_in_admin/screens/dashboard/dashboard_screen.dart';
-import 'package:clock_in_admin/screens/teachers/teachers_screen.dart';
-import 'package:clock_in_admin/screens/teachers_attendance/teachers_attendance_screen.dart';
 import 'package:flutter/material.dart';
 
 class PageRouteController extends ChangeNotifier {
@@ -9,10 +7,10 @@ class PageRouteController extends ChangeNotifier {
   GlobalKey<ScaffoldState> get scaffoldKey => _scaffoldKey;
 
   Widget _route = DashboardScreen();
-  // Widget _route = TeachersScreen();
+  // Widget _route = Attendance();
   Widget get route => _route;
 
-  String _pageTitle = '';
+  String _pageTitle = 'Dashboard';
   String get pageTitle => _pageTitle;
 
   void navigate(Widget page, {String title = ''}) {

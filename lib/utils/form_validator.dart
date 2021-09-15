@@ -9,6 +9,15 @@ String? validateEmail(String? value) {
   return null;
 }
 
+String? validateOptionalEmail(String? value) {
+  final verifyEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+  if (value!.isNotEmpty && !verifyEmail.hasMatch(value)) {
+    return 'Enter a valid Email Address';
+  }
+  return null;
+}
+
 String? validatePhoneNumber(String? value) {
   final verifyPhoneNum = RegExp(r'^(?:[+0]9)?[0-9]{10}$');
   if (value!.isEmpty) {

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CustomDateRangePicker extends StatefulWidget {
   final Function(dynamic)? onChanged;
+  final EdgeInsets? padding;
 
-  CustomDateRangePicker({this.onChanged, Key? key}) : super(key: key);
+  CustomDateRangePicker({
+    this.onChanged,
+    this.padding = const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+    Key? key,
+  }) : super(key: key);
 
   @override
   _CustomDateRangePickerState createState() => _CustomDateRangePickerState();
@@ -16,7 +22,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
     DateTimeRange _dateRange =
         DateTimeRange(start: DateTime.now(), end: DateTime.now());
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+      padding: widget.padding!,
       child: InkWell(
         onTap: () async {
           newDateRange = await showDateRangePicker(
@@ -34,19 +40,31 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildDataRangeItem('From',
-                "${newDateRange == null ? _dateRange.start : newDateRange.getFromDate()}"),
+                "${newDateRange == null ? formatDate(_dateRange.start) : formatDate(newDateRange.getFromDate())}"),
+            const SizedBox(
+              width: 10,
+            ),
             _buildDataRangeItem('Until',
-                "${newDateRange == null ? _dateRange.end : newDateRange.getEndDate()}"),
+                "${newDateRange == null ? formatDate(_dateRange.end) : formatDate(newDateRange.getEndDate())}"),
           ],
         ),
       ),
     );
   }
 
+  String formatDate(DateTime date) {
+    String _date = DateFormat('d MMMM, y').format(date);
+    return '$_date';
+  }
+
   Row _buildDataRangeItem(String text, String dateRange) {
     return Row(
       children: [
-        Icon(Icons.date_range_outlined, size: 24.0),
+        Icon(
+          Icons.date_range_outlined,
+          size: 20.0,
+          color: Colors.black45,
+        ),
         SizedBox(
           width: 5,
         ),
@@ -55,11 +73,17 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
           children: [
             Text(
               text,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54,
+                  fontSize: 12),
             ),
             Text(
               dateRange,
               overflow: TextOverflow.clip,
+              style: TextStyle(
+                color: Colors.black87,
+              ),
             )
           ],
         ),

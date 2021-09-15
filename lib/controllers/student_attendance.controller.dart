@@ -3,26 +3,26 @@ import 'package:clock_in_admin/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TeacherAttendanceController extends ChangeNotifier {
+class StudentAttendanceController extends ChangeNotifier {
   final BuildContext? context;
-  final String collectionName = 'teacher_clocks';
+  final String collectionName = 'student_clocks';
   Map<String, dynamic> _attendance = {}, _filteredAttendance = {};
   StreamSubscription? _subscription;
   int sortColumnIndex = 1;
   bool waiting = true, hasError = false, done = false, sortAscending = true;
 
-  int numOfPresentTeachers = 0;
-  int numOfAbsentTeachers = 0;
-  int numOfTeachersOnCampus = 0;
-  int numOfTeachersOutCampus = 0;
-  int totalNumOfTeachers = 0;
+  int numOfPresentStudents = 0;
+  int numOfAbsentStudents = 0;
+  int numOfStudentsOnCampus = 0;
+  int numOfStudentsOutCampus = 0;
+  int totalNumOfStudents = 0;
 
   // contrusctor
-  TeacherAttendanceController({this.context}) {
-    streamTeachersAttendanceData();
+  StudentAttendanceController({this.context}) {
+    streamStudentsAttendanceData();
   }
 
-  Map<String, dynamic> get getTeachersAttendance => _attendance;
+  Map<String, dynamic> get getStudentsAttendance => _attendance;
 
   @override
   void dispose() {
@@ -30,22 +30,22 @@ class TeacherAttendanceController extends ChangeNotifier {
     super.dispose();
   }
 
-  streamTeachersAttendanceData() async {
+  streamStudentsAttendanceData() async {
     var now = DateTime.now();
     var lastMidnight =
         DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
 
-    // Get teacher in the database
-    var _teachersSnap = await FirestoreDB.getAll('teachers');
-    var _teachers = _teachersSnap.docs.toList();
+    // Get student in the database
+    var _studentsSnap = await FirestoreDB.getAll('students');
+    var _students = _studentsSnap.docs.toList();
 
-    // get the total number of teachers in the database
-    totalNumOfTeachers = _teachers.length;
+    // get the total number of students in the database
+    totalNumOfStudents = _students.length;
 
     _subscription = FirebaseFirestore.instance
         .collection(collectionName)
         .where('time', isGreaterThanOrEqualTo: lastMidnight)
-        // .orderBy('teacherId')
+        // .orderBy('studentId')
         .orderBy('time')
         .snapshots()
         .listen(
@@ -54,7 +54,7 @@ class TeacherAttendanceController extends ChangeNotifier {
         Map<String, dynamic> at = Map();
 
         /// Generate attendance log
-        generateAttendanceLog(_teachers, _data, at);
+        generateAttendanceLog(_students, _data, at);
         attendanceSummary(at);
 
         // print(at);
@@ -76,13 +76,13 @@ class TeacherAttendanceController extends ChangeNotifier {
     );
   }
 
-  void generateAttendanceLog(List<QueryDocumentSnapshot> _teachers,
+  void generateAttendanceLog(List<QueryDocumentSnapshot> _students,
       List<QueryDocumentSnapshot> _data, Map<String, dynamic> at) {
     /// Get the maximum number of iterations to be done
-    /// Thisis done by comparing the lenght of the teachers list and the lenght
-    /// of the teacher attendance list then return the lenght of the greater one
+    /// Thisis done by comparing the lenght of the students list and the lenght
+    /// of the student attendance list then return the lenght of the greater one
     var _maxIterations =
-        _teachers.length > _data.length ? _teachers.length : _data.length;
+        _students.length > _data.length ? _students.length : _data.length;
 
     /// The loop starts here
     for (var i = 0; i < _maxIterations; i++) {
@@ -95,21 +95,21 @@ class TeacherAttendanceController extends ChangeNotifier {
       /// This is done to make sure that we dont access undefined elements in the list
       if (_data.length > i) {
         att = _data[i].data();
-        _key = att!['teacherId'];
+        _key = att!['studentId'];
       }
 
-      /// Check if the lennght of teachers list is greater than the loop counter
-      /// to prevent accessing undefined items from the teachers list.
+      /// Check if the lennght of students list is greater than the loop counter
+      /// to prevent accessing undefined items from the students list.
       /// Again, check if the final Map does not contain the key already
-      if (_teachers.length > i && !at.containsKey(_teachers[i].id)) {
+      if (_students.length > i && !at.containsKey(_students[i].id)) {
         /// Create a new map item with the staffId as the key a nested map as the content
-        /// The nested map contains two items, the [details] key: which will have the teacher
+        /// The nested map contains two items, the [details] key: which will have the student
         /// data as its content. And a [clocks] key which will contain the list of clocks or attendance
         /// Note: the clocks can be an empty List
-        at[_teachers[i].id] = {'details': _teachers[i].data(), 'clocks': []};
-        // ++numOfAbsentTeachers;
-      } else if (_teachers.length > i && at.containsKey(_teachers[i].id)) {
-        at[_teachers[i].id]['details'] = _teachers[i].data();
+        at[_students[i].id] = {'details': _students[i].data(), 'clocks': []};
+        // ++numOfAbsentStudents;
+      } else if (_students.length > i && at.containsKey(_students[i].id)) {
+        at[_students[i].id]['details'] = _students[i].data();
       }
 
       if (att != null && !at.containsKey(_key)) {
@@ -117,18 +117,18 @@ class TeacherAttendanceController extends ChangeNotifier {
           'details': <String, dynamic>{},
           'clocks': [att]
         };
-        // ++numOfPresentTeachers;
+        // ++numOfPresentStudents;
         // if (att['type'] == 'in')
-        //   ++numOfTeachersOnCampus;
+        //   ++numOfStudentsOnCampus;
         // else
-        //   ++numOfTeachersOutCampus;
+        //   ++numOfStudentsOutCampus;
       } else if (att != null && at.containsKey(_key)) {
         at[_key]['clocks'].add(att);
 
         // if (att['type'] == 'in')
-        //   ++numOfTeachersOnCampus;
+        //   ++numOfStudentsOnCampus;
         // else
-        //   ++numOfTeachersOutCampus;
+        //   ++numOfStudentsOutCampus;
       }
     }
   }
@@ -136,13 +136,13 @@ class TeacherAttendanceController extends ChangeNotifier {
   attendanceSummary(Map<String, dynamic> attendanceLog) {
     attendanceLog.forEach((key, value) {
       if (value['clocks'].length == 0) {
-        ++numOfAbsentTeachers;
+        ++numOfAbsentStudents;
       } else {
-        ++numOfPresentTeachers;
+        ++numOfPresentStudents;
         if (value['clocks'].last['type'] == 'in') {
-          ++numOfTeachersOnCampus;
+          ++numOfStudentsOnCampus;
         } else {
-          ++numOfTeachersOutCampus;
+          ++numOfStudentsOutCampus;
         }
       }
     });
@@ -152,23 +152,23 @@ class TeacherAttendanceController extends ChangeNotifier {
     _subscription!.cancel();
   }
 
-  // searchTeacher(String searchKey) {
+  // searchStudent(String searchKey) {
   //   _filteredAttendance = _attendance.where((docSnapshot) {
   //     // print(docSnapshot.data()['dateOfBirth'] is Timestamp);
   //     // return false;
-  //     Teacher teacher = Teacher.fromMapObject(docSnapshot.data()!);
-  //     return teacher.staffId.toString().contains(searchKey.toLowerCase());
+  //     Student student = Student.fromMapObject(docSnapshot.data()!);
+  //     return student.staffId.toString().contains(searchKey.toLowerCase());
   //   }).toList();
   //   notifyListeners();
   // }
 
-  // sortTeacherList(String columnName, int index, bool sorted) {
+  // sortStudentList(String columnName, int index, bool sorted) {
   //   sortColumnIndex = index;
   //   if (sortAscending) {
   //     sortAscending = false;
   //     _filteredAttendance.sort((a, b) {
-  //       Teacher farmer1 = Teacher.fromMapObject(a.data()!);
-  //       Teacher farmer2 = Teacher.fromMapObject(b.data()!);
+  //       Student farmer1 = Student.fromMapObject(a.data()!);
+  //       Student farmer2 = Student.fromMapObject(b.data()!);
   //       return farmer1
   //           .toMap()[columnName]
   //           .compareTo(farmer2.toMap()[columnName]);
@@ -176,8 +176,8 @@ class TeacherAttendanceController extends ChangeNotifier {
   //   } else {
   //     sortAscending = true;
   //     _filteredAttendance.sort((a, b) {
-  //       Teacher farmer1 = Teacher.fromMapObject(a.data()!);
-  //       Teacher farmer2 = Teacher.fromMapObject(b.data()!);
+  //       Student farmer1 = Student.fromMapObject(a.data()!);
+  //       Student farmer2 = Student.fromMapObject(b.data()!);
   //       return farmer2
   //           .toMap()[columnName]
   //           .compareTo(farmer1.toMap()[columnName]);

@@ -48,10 +48,10 @@ class _GenderSelectorState extends State<GenderSelector> {
         children: [
           Icon(
             Icons.wc,
-            color: Colors.black54,
+            color: Colors.black45,
           ),
           SizedBox(
-            width: 8,
+            width: 5,
           ),
           Text(
             'Gender ',
@@ -72,7 +72,7 @@ class _GenderSelectorState extends State<GenderSelector> {
           Expanded(
             child: LabeledRadioButton(
               label: 'Female',
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              padding: const EdgeInsets.symmetric(horizontal: 2.0),
               value: 'female',
               groupValue: _groupVal,
               onChanged: _onChangedHandler,

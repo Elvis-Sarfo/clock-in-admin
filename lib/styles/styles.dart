@@ -10,7 +10,8 @@ class Styles {
   // COLORS
   static const primaryDarkColor = Color(0xFF051e34);
   static const primaryColor = Color(0xFF870A4F);
-  static const secondaryColor = Color(0xFF265878);
+  // static const secondaryColor = Color(0xFF265878);
+  static const secondaryColor = Color(0xFFf50057);
   // static const secondaryColor = Color(0xFF3d8c95);
   static const complementaryColor = Color(0xFFE6873C);
   static const backgroundColor = Color(0xFFEFF2F8);
@@ -55,6 +56,14 @@ class Styles {
   static final cardDecoration = BoxDecoration(
     color: Colors.white,
     borderRadius: radius10,
+    border: border,
+    boxShadow: cardShadow,
+  );
+
+  static final tabCardDecoration = BoxDecoration(
+    color: Colors.white,
+    borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
     border: border,
     boxShadow: cardShadow,
   );

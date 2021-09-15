@@ -40,7 +40,8 @@ class Chart extends StatelessWidget {
                       ),
                 ),
                 Text("of $total"),
-                Text("Present")
+                Text("Present"),
+                Text("Today")
               ],
             ),
           ),

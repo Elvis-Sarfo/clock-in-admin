@@ -2,18 +2,19 @@ import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/custom_alert_dailog.dart';
 import 'package:clock_in_admin/components/custom_switch.dart';
 import 'package:clock_in_admin/components/shimmer_effect.dart';
-import 'package:clock_in_admin/controllers/teacher.controller.dart';
-import 'package:clock_in_admin/models/teacher.dart';
+import 'package:clock_in_admin/controllers/student.controller.dart';
+import 'package:clock_in_admin/models/student.dart';
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/screens/teachers/update_teacher_dialog.dart';
+import 'package:clock_in_admin/screens/students/add_student_dialog.dart';
+import 'package:clock_in_admin/screens/students/update_student_dialog.dart';
 import 'package:clock_in_admin/services/database_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../view_teacher_dialog.dart';
+import '../view_student_dialog.dart';
 
-class TeachersTable extends StatelessWidget {
-  const TeachersTable({
+class StudentsTable extends StatelessWidget {
+  const StudentsTable({
     Key? key,
   }) : super(key: key);
 
@@ -38,15 +39,15 @@ class TeachersTable extends StatelessWidget {
               shadowColor: Colors.transparent,
             ),
           ),
-          child: Consumer<TeacherController>(
-            builder: (context, teachersState, child) {
-              if (teachersState.hasError) {
+          child: Consumer<StudentController>(
+            builder: (context, studentsState, child) {
+              if (studentsState.hasError) {
                 return Padding(
                   padding: const EdgeInsets.all(100.0),
                   child: Center(child: Text('Something went wrong')),
                 );
               }
-              if (teachersState.waiting) {
+              if (studentsState.waiting) {
                 return ShimmerEffect.rectangular(height: 500);
               }
               return PaginatedDataTable(
@@ -54,20 +55,26 @@ class TeachersTable extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "List of teachers",
+                      "List of students",
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     ElevatedButton.icon(
                       style: TextButton.styleFrom(
+                        backgroundColor: Styles.complementaryColor,
                         padding: EdgeInsets.symmetric(
                           horizontal: Styles.defaultPadding * 1.5,
                           vertical: Styles.defaultPadding /
                               (Responsive.isMobile(context) ? 2 : 1),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddStudentDialog(),
+                        );
+                      },
                       icon: Icon(Icons.add),
-                      label: Text("Add New"),
+                      label: Text("Add New Student"),
                     ),
                   ],
                 ),
@@ -80,13 +87,13 @@ class TeachersTable extends StatelessWidget {
                     label: Text(''),
                   ),
                   DataColumn(
-                    label: Text('Staff Id'),
+                    label: Text('Student Id'),
                   ),
                   DataColumn(
                     label: Text('Name'),
                   ),
                   DataColumn(
-                    label: Text('Phone'),
+                    label: Text('Course'),
                   ),
                   DataColumn(
                     label: Text('Location'),
@@ -101,7 +108,7 @@ class TeachersTable extends StatelessWidget {
                     textAlign: TextAlign.center,
                   )),
                 ],
-                source: DataSource(teachersState.getFilteredTeachers, context),
+                source: DataSource(studentsState.getFilteredStudents, context),
               );
             },
           ),
@@ -125,29 +132,10 @@ class DataSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     var docSnapshot = asyncSnapshot![index];
-    Teacher teacher = Teacher.fromMapObject(docSnapshot.data());
+    Student student = Student.fromMapObject(docSnapshot.data());
     bool selected = false;
     return DataRow.byIndex(
-      // color: MaterialStateProperty.resolveWith<Color>(
-      //   (Set<MaterialState> states) {
-      //     if (states.contains(MaterialState.selected))
-      //       return Theme.of(context!).colorScheme.primary.withOpacity(0.08);
-      //     return Styles.primaryColor; // Use the default value.
-      //   },
-      // ),
       selected: selected,
-      // onSelectChanged: (value) {
-      //   selected = value;
-      //   // showDialog(
-      //   //   context: context,
-      //   //   builder: (BuildContext context) {
-      //   //     return ViewFarmer(
-      //   //       farmer: farmer,
-      //   //       farmerId: docSnapshot.id,
-      //   //     );
-      //   //   },
-      //   // );
-      // },
       index: index,
       cells: <DataCell>[
         // DataCell(Image.network(farmer.picture)),
@@ -156,38 +144,37 @@ class DataSource extends DataTableSource {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
-              child: teacher.picture != null
+              child: student.picture != null
                   ? CircularImage(
-                      child: Image.network(teacher.picture!),
+                      child: Image.network(student.picture!),
                     )
                   : CircularImage(
                       child: Image.asset(
-                        teacher.gender!.toLowerCase() == 'male'
-                            ? 'assets/images/teacher_male-no-bg.png'
-                            : 'assets/images/teacher-female-no-bg.png',
+                        student.gender!.toLowerCase() == 'male'
+                            ? 'assets/images/student_male-no-bg.png'
+                            : 'assets/images/student-female-no-bg.png',
                       ),
                     ),
               alignment: Alignment.center,
             ),
           ),
         ),
-        // DataCell(Text('images')),
         DataCell(
           Text(
-            teacher.staffId!,
+            student.id!,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        DataCell(Text(teacher.fullName()!)),
-        DataCell(Text(teacher.phone!)),
-        DataCell(Text(teacher.residence!)),
-        DataCell(Text(teacher.gender!.toUpperCase())),
+        DataCell(Text(student.fullName()!)),
+        DataCell(Text(student.course!)),
+        DataCell(Text(student.residence!)),
+        DataCell(Text(student.gender!.toUpperCase())),
         DataCell(
           CustomSwitch(
-            isSwitched: teacher.enabled ?? false,
+            isSwitched: student.enabled ?? false,
             onChanged: (value) async {
               Map<String, dynamic> update = {'enabled': value};
-              await FirestoreDB.updateDoc('teachers', teacher.staffId, update);
+              await FirestoreDB.updateDoc('students', student.id, update);
             },
           ),
         ),
@@ -205,8 +192,8 @@ class DataSource extends DataTableSource {
                   showDialog(
                     context: context!,
                     builder: (BuildContext context) {
-                      return ViewTeacherDialog(
-                        teacher: teacher,
+                      return ViewStudentDialog(
+                        student: student,
                       );
                     },
                   );
@@ -223,8 +210,8 @@ class DataSource extends DataTableSource {
                   showDialog(
                     context: context!,
                     builder: (BuildContext context) {
-                      return UpdateTeacherDialog(
-                        teacher: teacher,
+                      return UpdateStudentDialog(
+                        student: student,
                       );
                     },
                   );
@@ -263,9 +250,11 @@ class DataSource extends DataTableSource {
                             ),
                             onPressed: () async {
                               // deleteFarmer(docSnapshot.id);
-                              if (teacher.enabled != true) {
+                              if (student.enabled != true) {
                                 await FirestoreDB.deleteDoc(
-                                    'teachers', teacher.staffId);
+                                  'students',
+                                  student.id,
+                                );
                                 Navigator.of(context).pop();
                               }
                             },

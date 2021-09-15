@@ -4,7 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 
 class DateTimeWidget extends StatelessWidget {
-  DateTimeWidget({Key? key}) : super(key: key);
+  final double? width, heigth;
+  final bool showDate;
+  const DateTimeWidget(
+      {Key? key, this.heigth, this.width, this.showDate = true})
+      : super(key: key);
 
   // var _clockBoxDeco = BoxDecoration(
   //   color: Color(0xFF003256).withOpacity(0.8),
@@ -13,24 +17,25 @@ class DateTimeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TimerBuilder.periodic(Duration(seconds: 1), builder: (context) {
+    return TimerBuilder.periodic(const Duration(seconds: 1),
+        builder: (context) {
       String hour = DateTime.now().hour.toString();
       String min = DateTime.now().minute.toString();
       String sec = DateTime.now().second.toString();
       String date =
           DateFormat('EEE, dd MMM, yyyy').format(DateTime.now()).toString();
 
-      final screenHeight = MediaQuery.of(context).size.height;
-      final screenWidth = MediaQuery.of(context).size.width;
+      // final screenHeight = MediaQuery.of(context).size.height;
+      // final screenWidth = MediaQuery.of(context).size.width;
       return Column(
         children: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            padding: EdgeInsets.all(3.0),
-            // height: screenWidth > 768 ? screenHeight * 0.15 : 100,
-            height: 100,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.all(3.0),
+            height: heigth ?? 100,
+            width: width ?? double.infinity,
             decoration: BoxDecoration(
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   spreadRadius: 0,
@@ -49,10 +54,10 @@ class DateTimeWidget extends StatelessWidget {
             ),
             child: Container(
               // margin: EdgeInsets.symmetric(horizontal: 10),
-              padding: EdgeInsets.all(5.0),
+              padding: const EdgeInsets.all(5.0),
               height: double.infinity,
               decoration: BoxDecoration(
-                boxShadow: [
+                boxShadow: const [
                   // BoxShadow(
                   //   color: Colors.black38,
                   //   blurRadius: 1.0,
@@ -70,12 +75,12 @@ class DateTimeWidget extends StatelessWidget {
                       flex: 1,
                       child: _buildTimeValueCard(
                           hour.length > 1 ? hour : '0$hour', 'Hours')),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Expanded(
                       flex: 1,
                       child: _buildTimeValueCard(
                           min.length > 1 ? min : '0$min', 'Minutes')),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   Expanded(
                       flex: 1,
                       child: _buildTimeValueCard(
@@ -84,13 +89,15 @@ class DateTimeWidget extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            date,
-            style: TextStyle(
+          if (showDate)
+            Text(
+              date,
+              style: const TextStyle(
                 color: Colors.black54,
                 fontWeight: FontWeight.bold,
-                fontSize: 24),
-          ),
+                fontSize: 24,
+              ),
+            ),
         ],
       );
     });
@@ -98,11 +105,11 @@ class DateTimeWidget extends StatelessWidget {
 
   Widget _buildTimeValueCard(String? value, String? type) {
     return Container(
-      padding: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       height: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black38,
             blurRadius: 3.0,
@@ -114,18 +121,16 @@ class DateTimeWidget extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  value ?? '',
-                  style: GoogleFonts.robotoCondensed(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 70,
-                    color: Colors.black87.withOpacity(0.6),
-                  ),
+          FittedBox(
+            fit: BoxFit.fill,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                value ?? '',
+                style: GoogleFonts.robotoCondensed(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 70,
+                  color: Colors.black87.withOpacity(0.6),
                 ),
               ),
             ),
@@ -135,7 +140,7 @@ class DateTimeWidget extends StatelessWidget {
             top: -5,
             child: Text(
               type ?? '',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black54,
                 fontWeight: FontWeight.bold,
               ),

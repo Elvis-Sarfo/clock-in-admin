@@ -327,7 +327,6 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
               password: _teacher!.staffId,
             );
           }
-          await uploadProfilePicture();
 
           // todo: Check if the user is signed up first before you continue the next task
           // variable to hold te results of the database actions
@@ -375,13 +374,10 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
   }
 
   Future<void> uploadProfilePicture() async {
-    var imageUrl = (profileImage != null)
-        ? await FirestoreDB.saveFile(profileImage, '/teachers/',
-            _teacher!.fullName()!.replaceAll(' ', '_'))
-        : null;
+    if (profileImage != null) {
+      var imageUrl = await FirestoreDB.saveFile(profileImage, '/teachers/',
+          _teacher!.fullName()!.replaceAll(' ', '_'));
 
-    if (imageUrl != null) {
-      // update the teacher pictureURL field
       Map<String, dynamic> uppdate = {"picture": imageUrl};
       await FirestoreDB.updateDoc('teachers', _teacher!.staffId, uppdate);
     }
@@ -411,17 +407,19 @@ class _UpdateTeacherDialogState extends State<UpdateTeacherDialog> {
         .where('teacherId', isEqualTo: widget.teacher!.staffId)
         .orderBy('time', descending: true)
         .get();
+    if (snapshot.docs.isNotEmpty) {
+      /// Use a batch to update all the documents that returns
+      WriteBatch writeBatch = FirebaseFirestore.instance.batch();
+      snapshot.docs.forEach((doc) async {
+        var docRef = teacherClocks.doc(doc.id);
+        writeBatch.update(docRef, update);
+      });
 
-    /// Use a batch to update all the documents that returns
-    WriteBatch writeBatch = FirebaseFirestore.instance.batch();
-    snapshot.docs.forEach((doc) async {
-      var docRef = teacherClocks.doc(doc.id);
-      writeBatch.update(docRef, update);
-    });
+      // Comit the batch operation in the database.
+      await writeBatch.commit();
+      print('updated all documents inside');
+    }
 
-    // Comit the batch operation in the database.
-    await writeBatch.commit();
-    print('updated all documents inside');
     return result;
   }
 
