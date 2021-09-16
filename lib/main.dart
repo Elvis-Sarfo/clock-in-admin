@@ -45,12 +45,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Clockin Admin',
-      theme: ThemeData.dark().copyWith(
+      // theme: ThemeData.dark().copyWith(
+      //   scaffoldBackgroundColor: Styles.backgroundColor,
+      //   textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+      //       .apply(bodyColor: Colors.black87),
+      //   canvasColor: Styles.primaryColor,
+      //   cardTheme: CardTheme(color: Styles.secondaryColor),
+      // ),
+      theme: ThemeData(
         scaffoldBackgroundColor: Styles.backgroundColor,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-            .apply(bodyColor: Colors.black87),
-        canvasColor: Styles.primaryColor,
         cardTheme: CardTheme(color: Styles.secondaryColor),
+        canvasColor: Styles.primaryColor,
+        primaryColor: Styles.primaryColor,
+        primaryColorDark: Styles.primaryColor,
+        backgroundColor: Styles.primaryColor,
+        buttonTheme: ButtonThemeData(
+          buttonColor: Styles.primaryColor,
+        ),
       ),
       home: FirebaseAuth.instance.currentUser == null ? Login() : MainScreen(),
     );

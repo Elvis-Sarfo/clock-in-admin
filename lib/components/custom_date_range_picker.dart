@@ -1,3 +1,5 @@
+import 'package:clock_in_admin/responsive.dart';
+import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -30,6 +32,48 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
             firstDate: DateTime(DateTime.now().year - 5),
             lastDate: DateTime(DateTime.now().year + 5),
             initialDateRange: _dateRange,
+            saveText: 'Select',
+            builder: (BuildContext? context, Widget? child) {
+              var _width = MediaQuery.of(context!).size.width;
+              var _height = MediaQuery.of(context).size.height;
+              const MaterialColor buttonTextColor = const MaterialColor(
+                0xFF4A5BF6,
+                const <int, Color>{
+                  50: const Color(0xFF870A4F),
+                  100: const Color(0xFF870A4F),
+                  200: const Color(0xFF870A4F),
+                  300: const Color(0xFF870A4F),
+                  400: const Color(0xFF870A4F),
+                  500: const Color(0xFF870A4F),
+                  600: const Color(0xFF870A4F),
+                  700: const Color(0xFF870A4F),
+                  800: const Color(0xFF870A4F),
+                  900: const Color(0xFF870A4F),
+                },
+              );
+              return Theme(
+                  data: ThemeData(
+                    primarySwatch: buttonTextColor,
+                    primaryColor: Styles.complementaryColor,
+                    buttonBarTheme: ButtonBarThemeData(
+                      buttonTextTheme: ButtonTextTheme.accent,
+                    ),
+                    colorScheme: ColorScheme.fromSwatch()
+                        .copyWith(secondary: Styles.complementaryColor),
+                  ),
+                  child: Center(
+                      child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: Responsive.isMobile(context)
+                          ? _height * 0.95
+                          : _height * 0.7,
+                      maxWidth: Responsive.isMobile(context)
+                          ? _width * 0.95
+                          : _width * 0.3,
+                    ),
+                    child: child!,
+                  )));
+            },
           );
 
           setState(() {
