@@ -63,9 +63,10 @@ class Header extends StatelessWidget {
     );
     return TimerBuilder.periodic(const Duration(seconds: 1),
         builder: (context) {
-      String hour = DateTime.now().hour.toString();
+      String hour = DateFormat('h').format(DateTime.now());
       String min = DateTime.now().minute.toString();
       String sec = DateTime.now().second.toString();
+      String meridian = DateFormat('a').format(DateTime.now());
       String date =
           DateFormat('EEE, dd MMM, yyyy').format(DateTime.now()).toString();
       return Padding(
@@ -93,6 +94,10 @@ class Header extends StatelessWidget {
                   ),
                   TextSpan(
                     text: sec.length > 1 ? sec : '0$sec',
+                    style: textStyle,
+                  ),
+                  TextSpan(
+                    text: ' $meridian',
                     style: textStyle,
                   ),
                 ],
