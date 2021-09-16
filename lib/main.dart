@@ -1,9 +1,7 @@
 import 'package:clock_in_admin/controllers/menu.controller.dart';
 import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/controllers/student.controller.dart';
-import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
 import 'package:clock_in_admin/controllers/teacher.controller.dart';
-import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/screens/auth/login/login.dart';
 import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';

@@ -3,7 +3,6 @@ import 'package:clock_in_admin/components/gender_selector.dart';
 import 'package:clock_in_admin/components/image_chooser.dart';
 import 'package:clock_in_admin/components/main_button.dart';
 import 'package:clock_in_admin/components/type_ahead_input.dart';
-import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/services/auth_services.dart';

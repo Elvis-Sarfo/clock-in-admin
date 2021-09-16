@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CustomDateRangePicker extends StatefulWidget {
-  final Function(dynamic)? onChanged;
+  final Function(DateTimeRange?)? onChanged;
   final EdgeInsets? padding;
 
   CustomDateRangePicker({
@@ -16,7 +16,7 @@ class CustomDateRangePicker extends StatefulWidget {
 }
 
 class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
-  var newDateRange;
+  DateTimeRange? newDateRange;
   @override
   Widget build(BuildContext context) {
     DateTimeRange _dateRange =
@@ -40,12 +40,12 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildDataRangeItem('From',
-                "${newDateRange == null ? formatDate(_dateRange.start) : formatDate(newDateRange.getFromDate())}"),
+                "${newDateRange == null ? formatDate(_dateRange.start) : formatDate(newDateRange!.start)}"),
             const SizedBox(
               width: 10,
             ),
             _buildDataRangeItem('Until',
-                "${newDateRange == null ? formatDate(_dateRange.end) : formatDate(newDateRange.getEndDate())}"),
+                "${newDateRange == null ? formatDate(_dateRange.end) : formatDate(newDateRange!.end)}"),
           ],
         ),
       ),

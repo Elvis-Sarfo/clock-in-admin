@@ -344,6 +344,4 @@ class _AddTeacherDialogState extends State<AddTeacherDialog> {
       }
     }
   }
-
-  _onImageSeleceted() {}
 }

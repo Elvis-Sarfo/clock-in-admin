@@ -9,12 +9,21 @@ import 'package:intl/intl.dart';
 
 import 'components/attendance_log.dart';
 
-class ViewStudentAttendanceDialog extends StatelessWidget {
+class ViewStudentAttendanceDialog extends StatefulWidget {
   final Student? student;
   ViewStudentAttendanceDialog({Key? key, this.student}) : super(key: key);
 
-  final CollectionReference student_clocks =
+  @override
+  State<ViewStudentAttendanceDialog> createState() =>
+      _ViewStudentAttendanceDialogState();
+}
+
+class _ViewStudentAttendanceDialogState
+    extends State<ViewStudentAttendanceDialog> {
+  final CollectionReference studentClocks =
       FirebaseFirestore.instance.collection('student_clocks');
+
+  DateTime? _startDate, _endDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +31,7 @@ class ViewStudentAttendanceDialog extends StatelessWidget {
     // final _pickDateRange = context.watch<DateRangePicker>();
     // DateTimeRange _dateRange =
     //     DateTimeRange(start: DateTime.now(), end: DateTime.now());
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       // primary: false,
@@ -56,18 +66,23 @@ class ViewStudentAttendanceDialog extends StatelessWidget {
                   )
                 ],
               ),
-              _buildUserProfileWidget(context, student!),
+              _buildUserProfileWidget(context, widget.student!),
               Card(
                 elevation: 1.0,
                 child: CustomDateRangePicker(
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    setState(() {
+                      _startDate = value!.start;
+                      _endDate = value.end;
+                    });
+                  },
                 ),
               ),
               // buildSummaryWidget(context, _pickDateRange),
               Expanded(
                 child: FutureBuilder<QuerySnapshot>(
-                  future: student_clocks
-                      .where('studentId', isEqualTo: student!.id)
+                  future: studentClocks
+                      .where('studentId', isEqualTo: widget.student!.id)
                       .orderBy('time', descending: true)
                       .get(),
                   builder: (BuildContext context,
@@ -79,13 +94,39 @@ class ViewStudentAttendanceDialog extends StatelessWidget {
                       int counter = 0;
                       var _date;
 
-                      var day = DateTime.now().add(Duration(days: 1));
-                      while (counter < 32 || counter < _attendance.length) {
-                        day = day.subtract(Duration(days: 1));
-                        _date = DateFormat('dd-MMM-yyyy').format(day);
+                      var now = DateTime.now();
 
-                        if (!_clockLog.containsKey(_date) &&
-                            day.month == DateTime.now().month) {
+                      var endDate = DateTime(
+                        _endDate!.year,
+                        _endDate!.month,
+                        _endDate!.day,
+                      );
+
+                      DateTime startDate = _startDate == null
+                          ? DateTime(
+                              now.year,
+                              now.month,
+                              now.day,
+                            ).subtract(Duration(days: now.day - 1))
+                          : DateTime(
+                              _startDate!.year,
+                              _startDate!.month,
+                              _startDate!.day,
+                            );
+
+                      var timeTrack = endDate.add(Duration(days: 1));
+                      // Structure the data
+                      while (counter < 32 || counter < _attendance.length) {
+                        timeTrack = timeTrack.subtract(Duration(days: 1));
+                        _date = DateFormat('dd-MMM-yyyy').format(timeTrack);
+
+                        bool _isValidDay = timeTrack.isAfter(
+                          startDate.subtract(
+                            Duration(days: 1),
+                          ),
+                        );
+
+                        if (!_clockLog.containsKey(_date) && _isValidDay) {
                           _clockLog[_date] = [];
                         }
 
@@ -93,14 +134,29 @@ class ViewStudentAttendanceDialog extends StatelessWidget {
                           var _data = _attendance[counter];
                           var _time = DateTime.fromMillisecondsSinceEpoch(
                               _data.data()['time']);
+
                           var _formattedTime =
                               DateFormat('dd-MMM-yyyy').format(_time);
 
+                          _time = DateTime(
+                            _time.year,
+                            _time.month,
+                            _time.day,
+                          );
+
+                          var __startDate =
+                              startDate.subtract(Duration(days: 1));
+                          var __endDate = endDate.add(Duration(days: 1));
+
+                          bool isValidDate = _time.isAfter(__startDate) &&
+                              _time.isBefore(__endDate);
+
                           if (!_clockLog.containsKey(_formattedTime) &&
-                              _time.month == DateTime.now().month)
+                              isValidDate) {
                             _clockLog[_formattedTime] = [_data.data()];
-                          else if (_time.month == DateTime.now().month)
+                          } else if (isValidDate) {
                             _clockLog[_formattedTime].add(_data.data());
+                          }
                         }
 
                         ++counter;
@@ -148,128 +204,30 @@ class ViewStudentAttendanceDialog extends StatelessWidget {
         ),
       ),
     );
+  }
 
-    // SimpleDialog(
-    //   titlePadding:
-    //       EdgeInsets.symmetric(horizontal: Styles.defaultPadding, vertical: 5),
-    //   backgroundColor: Styles.backgroundColor,
-    //   title: Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //     children: [
-    //       Text('StudentAttendance Details'),
-    //       Tooltip(
-    //         message: "Close Window",
-    //         child: IconButton(
-    //             splashColor: Colors.red.withOpacity(0.3),
-    //             hoverColor: Colors.red.withOpacity(0.3),
-    //             splashRadius: 20,
-    //             highlightColor: Colors.white,
-    //             icon: Icon(
-    //               Icons.close,
-    //               color: Colors.redAccent,
-    //               size: 25,
-    //             ),
-    //             onPressed: () {
-    //               Navigator.of(context).pop();
-    //             }),
-    //       )
-    //     ],
-    //   ),
-    //   children: [
-    //     Expanded(
-    //       child: FutureBuilder<QuerySnapshot>(
-    //         future: _student_clocks
-    //             .where('studentId', isEqualTo: student!.staffId)
-    //             .orderBy('time', descending: true)
-    //             .get(),
-    //         builder:
-    //             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    //           List<Widget> children;
-    //           if (snapshot.hasData) {
-    //             Map<String, dynamic> _clockLog = {};
-    //             var _attendance = snapshot.data!.docs;
-    //             int counter = 0, dataCounter = 0;
-    //             var _date;
+  getFirstDateOfMonth(DateTime date) {
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).subtract(Duration(days: date.day - 1));
+  }
 
-    //             var day = DateTime.now().add(Duration(days: 1));
-    //             while (counter < 32 || counter < _attendance.length) {
-    //               day = day.subtract(Duration(days: 1));
-    //               _date = DateFormat('dd-MMM-yyyy').format(day);
-
-    //               if (!_clockLog.containsKey(_date) &&
-    //                   day.month == DateTime.now().month) {
-    //                 _clockLog[_date] = [];
-    //               }
-
-    //               if (counter < _attendance.length) {
-    //                 var _data = _attendance[counter];
-    //                 var _time = DateTime.fromMillisecondsSinceEpoch(
-    //                     _data.data()['time']);
-    //                 var _formattedTime =
-    //                     DateFormat('dd-MMM-yyyy').format(_time);
-
-    //                 if (!_clockLog.containsKey(_formattedTime) &&
-    //                     _time.month == DateTime.now().month)
-    //                   _clockLog[_formattedTime] = [_data.data()];
-    //                 else if (_time.month == DateTime.now().month)
-    //                   _clockLog[_formattedTime].add(_data.data());
-    //               }
-
-    //               ++counter;
-    //             }
-    //             return Center(
-    //               child: TimeTracker(
-    //                 clockLog: _clockLog,
-    //               ),
-    //             );
-    //             // children = <Widget>[
-    //             //   const Icon(
-    //             //     Icons.check_circle_outline,
-    //             //     color: Colors.green,
-    //             //     size: 60,
-    //             //   ),
-    //             //   Padding(
-    //             //     padding: const EdgeInsets.only(top: 16),
-    //             //     child: Text('Result: ${snapshot.data!.size}'),
-    //             //   )
-    //             // ];
-    //           } else if (snapshot.hasError) {
-    //             children = <Widget>[
-    //               const Icon(
-    //                 Icons.error_outline,
-    //                 color: Colors.red,
-    //                 size: 60,
-    //               ),
-    //               Padding(
-    //                 padding: const EdgeInsets.only(top: 16),
-    //                 child: Text('Error: ${snapshot.error}'),
-    //               )
-    //             ];
-    //           } else {
-    //             children = const <Widget>[
-    //               SizedBox(
-    //                 child: CircularProgressIndicator(),
-    //                 width: 60,
-    //                 height: 60,
-    //               ),
-    //               Padding(
-    //                 padding: EdgeInsets.only(top: 16),
-    //                 child: Text('Awaiting result...'),
-    //               )
-    //             ];
-    //           }
-    //           return Center(
-    //             child: Column(
-    //               mainAxisAlignment: MainAxisAlignment.center,
-    //               crossAxisAlignment: CrossAxisAlignment.center,
-    //               children: children,
-    //             ),
-    //           );
-    //         },
-    //       ),
-    //     )
-    //   ],
-    // );
+  bool isLeapYear(int year) {
+    if (year % 4 == 0) {
+      if (year % 100 == 0) {
+        if (year % 400 == 0) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   _buildUserProfileWidget(BuildContext context, Student student) {

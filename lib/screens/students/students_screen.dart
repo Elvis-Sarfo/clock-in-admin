@@ -3,7 +3,6 @@ import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'components/student_table.dart';
-import 'components/student_screen_meta_info.dart';
 
 class StudentsScreen extends StatelessWidget {
   @override

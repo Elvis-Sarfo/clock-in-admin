@@ -2,6 +2,7 @@ import 'package:clock_in_admin/components/card_view.dart';
 import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/custom_date_range_picker.dart';
 import 'package:clock_in_admin/models/teacher.dart';
+import 'package:clock_in_admin/models/teacher.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +10,21 @@ import 'package:intl/intl.dart';
 
 import 'components/attendance_log.dart';
 
-class ViewTeacherAttendanceDialog extends StatelessWidget {
+class ViewTeacherAttendanceDialog extends StatefulWidget {
   final Teacher? teacher;
   ViewTeacherAttendanceDialog({Key? key, this.teacher}) : super(key: key);
 
-  final CollectionReference teacher_clocks =
+  @override
+  State<ViewTeacherAttendanceDialog> createState() =>
+      _ViewTeacherAttendanceDialogState();
+}
+
+class _ViewTeacherAttendanceDialogState
+    extends State<ViewTeacherAttendanceDialog> {
+  final CollectionReference teacherClocks =
       FirebaseFirestore.instance.collection('teacher_clocks');
+
+  DateTime? _startDate, _endDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +32,7 @@ class ViewTeacherAttendanceDialog extends StatelessWidget {
     // final _pickDateRange = context.watch<DateRangePicker>();
     // DateTimeRange _dateRange =
     //     DateTimeRange(start: DateTime.now(), end: DateTime.now());
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       // primary: false,
@@ -56,18 +67,23 @@ class ViewTeacherAttendanceDialog extends StatelessWidget {
                   )
                 ],
               ),
-              _buildUserProfileWidget(context, teacher!),
+              _buildUserProfileWidget(context, widget.teacher!),
               Card(
                 elevation: 1.0,
                 child: CustomDateRangePicker(
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    setState(() {
+                      _startDate = value!.start;
+                      _endDate = value.end;
+                    });
+                  },
                 ),
               ),
               // buildSummaryWidget(context, _pickDateRange),
               Expanded(
                 child: FutureBuilder<QuerySnapshot>(
-                  future: teacher_clocks
-                      .where('teacherId', isEqualTo: teacher!.staffId)
+                  future: teacherClocks
+                      .where('teacherId', isEqualTo: widget.teacher!.staffId)
                       .orderBy('time', descending: true)
                       .get(),
                   builder: (BuildContext context,
@@ -79,13 +95,39 @@ class ViewTeacherAttendanceDialog extends StatelessWidget {
                       int counter = 0;
                       var _date;
 
-                      var day = DateTime.now().add(Duration(days: 1));
-                      while (counter < 32 || counter < _attendance.length) {
-                        day = day.subtract(Duration(days: 1));
-                        _date = DateFormat('dd-MMM-yyyy').format(day);
+                      var now = DateTime.now();
 
-                        if (!_clockLog.containsKey(_date) &&
-                            day.month == DateTime.now().month) {
+                      var endDate = DateTime(
+                        _endDate!.year,
+                        _endDate!.month,
+                        _endDate!.day,
+                      );
+
+                      DateTime startDate = _startDate == null
+                          ? DateTime(
+                              now.year,
+                              now.month,
+                              now.day,
+                            ).subtract(Duration(days: now.day - 1))
+                          : DateTime(
+                              _startDate!.year,
+                              _startDate!.month,
+                              _startDate!.day,
+                            );
+
+                      var timeTrack = endDate.add(Duration(days: 1));
+                      // Structure the data
+                      while (counter < 32 || counter < _attendance.length) {
+                        timeTrack = timeTrack.subtract(Duration(days: 1));
+                        _date = DateFormat('dd-MMM-yyyy').format(timeTrack);
+
+                        bool _isValidDay = timeTrack.isAfter(
+                          startDate.subtract(
+                            Duration(days: 1),
+                          ),
+                        );
+
+                        if (!_clockLog.containsKey(_date) && _isValidDay) {
                           _clockLog[_date] = [];
                         }
 
@@ -93,14 +135,29 @@ class ViewTeacherAttendanceDialog extends StatelessWidget {
                           var _data = _attendance[counter];
                           var _time = DateTime.fromMillisecondsSinceEpoch(
                               _data.data()['time']);
+
                           var _formattedTime =
                               DateFormat('dd-MMM-yyyy').format(_time);
 
+                          _time = DateTime(
+                            _time.year,
+                            _time.month,
+                            _time.day,
+                          );
+
+                          var __startDate =
+                              startDate.subtract(Duration(days: 1));
+                          var __endDate = endDate.add(Duration(days: 1));
+
+                          bool isValidDate = _time.isAfter(__startDate) &&
+                              _time.isBefore(__endDate);
+
                           if (!_clockLog.containsKey(_formattedTime) &&
-                              _time.month == DateTime.now().month)
+                              isValidDate) {
                             _clockLog[_formattedTime] = [_data.data()];
-                          else if (_time.month == DateTime.now().month)
+                          } else if (isValidDate) {
                             _clockLog[_formattedTime].add(_data.data());
+                          }
                         }
 
                         ++counter;
@@ -148,6 +205,30 @@ class ViewTeacherAttendanceDialog extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  getFirstDateOfMonth(DateTime date) {
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+    ).subtract(Duration(days: date.day - 1));
+  }
+
+  bool isLeapYear(int year) {
+    if (year % 4 == 0) {
+      if (year % 100 == 0) {
+        if (year % 400 == 0) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   _buildUserProfileWidget(BuildContext context, Teacher teacher) {

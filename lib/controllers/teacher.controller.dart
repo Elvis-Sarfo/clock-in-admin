@@ -58,15 +58,7 @@ class TeacherController extends ChangeNotifier {
 
     _subscription1 =
         FirebaseFirestore.instance.collection('teachers').snapshots().listen(
-      (_teachersSnap)
-      //  {
-      //   var _teachers = _teachersSnap.docs.toList();
-      //   totalNumOfTeachers = _teachers.length;
-
-      //   startAttendanceStream(lastMidnight, _teachers);
-      //   notifyListeners();
-      // },
-      {
+      (_teachersSnap) {
         _filteredTeachers = _teachers = _teachersSnap.docs.toList();
         totalNumOfTeachers = _teachers.length;
 

@@ -1,10 +1,8 @@
 import 'package:clock_in_admin/components/attendance_charts/attendance_charts.dart';
-import 'package:clock_in_admin/models/teacher_attendance.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'components/teachers_table.dart';
-import 'components/teacher_screen_meta_info.dart';
 
 class TeachersScreen extends StatelessWidget {
   @override

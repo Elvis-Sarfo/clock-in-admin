@@ -59,7 +59,7 @@ class AutocompleteBasicExample extends StatelessWidget {
 
   Widget _optionsViewBuilder(BuildContext context,
       AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return Align(
       alignment: Alignment.topLeft,
       child: Material(

@@ -98,9 +98,7 @@ class ExpandableListItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.0)),
             child: Icon(
               latestClock != null
-                  // ? latestClock.type == 'in'
-                  ? Icons.local_parking_outlined // Icons.check_outlined
-                  // : Icons.close
+                  ? Icons.local_parking_outlined
                   : Icons.hdr_auto_outlined,
               color: Colors.white,
               size: 12.0,

@@ -1,7 +1,6 @@
 import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/shimmer_effect.dart';
 import 'package:clock_in_admin/controllers/student.controller.dart';
-import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
 import 'package:clock_in_admin/models/student.dart';
 import 'package:clock_in_admin/models/student_attendance.dart';
 import 'package:clock_in_admin/styles/styles.dart';
