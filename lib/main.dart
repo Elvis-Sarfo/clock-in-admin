@@ -25,15 +25,15 @@ void main() {
         ChangeNotifierProvider<TeacherController>(
           create: (context) => TeacherController(),
         ),
-        ChangeNotifierProvider<TeacherAttendanceController>(
-          create: (context) => TeacherAttendanceController(context: context),
-        ),
+        // ChangeNotifierProvider<TeacherAttendanceController>(
+        //   create: (context) => TeacherAttendanceController(context: context),
+        // ),
         ChangeNotifierProvider<StudentController>(
           create: (context) => StudentController(),
         ),
-        ChangeNotifierProvider<StudentAttendanceController>(
-          create: (context) => StudentAttendanceController(context: context),
-        ),
+        // ChangeNotifierProvider<StudentAttendanceController>(
+        //   create: (context) => StudentAttendanceController(context: context),
+        // ),
       ],
       child: MyApp(),
     ),

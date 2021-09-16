@@ -437,7 +437,7 @@ class _UpdateStudentDialogState extends State<UpdateStudentDialog> {
           // save the image in the firebase storage
           await uploadProfilePicture();
 
-          StudentAttendanceController().streamStudentsAttendanceData();
+          // StudentAttendanceController().streamStudentsAttendanceData();
           Navigator.of(context).pop();
         } else {
           setState(() {

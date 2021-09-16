@@ -1,5 +1,6 @@
 import 'package:clock_in_admin/components/circular_image.dart';
 import 'package:clock_in_admin/components/shimmer_effect.dart';
+import 'package:clock_in_admin/controllers/student.controller.dart';
 import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
 import 'package:clock_in_admin/models/student.dart';
 import 'package:clock_in_admin/models/student_attendance.dart';
@@ -42,7 +43,7 @@ class StudentsAttendancesTable extends StatelessWidget {
               shadowColor: Colors.transparent,
             ),
           ),
-          child: Consumer<StudentAttendanceController>(
+          child: Consumer<StudentController>(
             builder: (context, attendanceState, child) {
               if (attendanceState.hasError) {
                 return Padding(
