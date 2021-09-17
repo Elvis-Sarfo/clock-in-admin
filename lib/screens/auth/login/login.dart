@@ -4,7 +4,6 @@ import 'package:clock_in_admin/components/error_message.dart';
 import 'package:clock_in_admin/components/main_button.dart';
 import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/screens/dashboard/dashboard_screen.dart';
 import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/services/auth_services.dart';
 import 'package:clock_in_admin/services/database_services.dart';

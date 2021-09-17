@@ -109,4 +109,8 @@ class Auth {
       validatePhoneNum(phoneNum),
     );
   }
+
+  static Future<dynamic> signOutUser() async {
+    return await FirebaseAuth.instance.signOut();
+  }
 }

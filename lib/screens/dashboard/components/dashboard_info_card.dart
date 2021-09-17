@@ -2,7 +2,6 @@ import 'package:clock_in_admin/models/card_info.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class DashboardInfoCard extends StatelessWidget {
   const DashboardInfoCard({

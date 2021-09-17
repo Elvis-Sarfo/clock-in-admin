@@ -1,6 +1,6 @@
 import 'package:clock_in_admin/components/shimmer_effect.dart';
-import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
-import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
+import 'package:clock_in_admin/controllers/student.controller.dart';
+import 'package:clock_in_admin/controllers/teacher.controller.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class AttendanceChart extends StatelessWidget {
 class TeachersAttendanceChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<TeacherAttendanceController>(
+    return Consumer<TeacherController>(
       builder: (context, attendanceState, child) {
         if (attendanceState.hasError) {
           return Padding(
@@ -71,7 +71,7 @@ class TeachersAttendanceChat extends StatelessWidget {
 class StudentsAttendanceChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<StudentAttendanceController>(
+    return Consumer<StudentController>(
       builder: (context, attendanceState, child) {
         if (attendanceState.hasError) {
           return Padding(

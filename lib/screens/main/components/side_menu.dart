@@ -1,10 +1,12 @@
 import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/screens/attendance/attendance.dart';
+import 'package:clock_in_admin/screens/auth/login/login.dart';
 import 'package:clock_in_admin/screens/dashboard/dashboard_screen.dart';
 import 'package:clock_in_admin/screens/students/students_screen.dart';
 import 'package:clock_in_admin/screens/teachers/teachers_screen.dart';
-import 'package:clock_in_admin/screens/teachers_attendance/teachers_attendance_screen.dart';
+import 'package:clock_in_admin/services/auth_services.dart';
+import 'package:clock_in_admin/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -73,11 +75,15 @@ class SideMenu extends StatelessWidget {
                 }
               },
             ),
-            // DrawerListTile(
-            //   title: "Profile",
-            //   leadingIcon: Icons.person,
-            //   press: () {},
-            // ),
+            DrawerListTile(
+              title: "Logout",
+              leadingIcon: Icons.logout,
+              press: () {
+                Auth.signOutUser();
+                Navigator.pop(context);
+                sendToPage(context, Login());
+              },
+            ),
             // DrawerListTile(
             //   title: "Settings",
             //   leadingIcon: Icons.settings,

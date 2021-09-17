@@ -379,6 +379,7 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
         }
       }
     } on Exception catch (e) {
+      print(e);
       setState(() {
         _isLoading = false;
         showErrorMsg = false;

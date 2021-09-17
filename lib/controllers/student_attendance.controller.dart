@@ -1,15 +1,25 @@
 import 'dart:async';
-import 'package:clock_in_admin/services/database_services.dart';
+import 'package:clock_in_admin/models/student.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum StudentControl { attendance, students }
+
 class StudentAttendanceController extends ChangeNotifier {
+  final StudentControl? studentControl;
   final BuildContext? context;
   final String collectionName = 'student_clocks';
   Map<String, dynamic> _attendance = {}, _filteredAttendance = {};
-  StreamSubscription? _subscription;
+  List<QueryDocumentSnapshot> _students = [], _filteredStudents = [];
+  StreamSubscription? _subscription, _subscription1;
+
   int sortColumnIndex = 1;
-  bool waiting = true, hasError = false, done = false, sortAscending = true;
+  bool waiting = true,
+      hasError = false,
+      done = false,
+      sortAscending = true,
+      isUpdatingStudent = false,
+      showErrorMsg = false;
 
   int numOfPresentStudents = 0;
   int numOfAbsentStudents = 0;
@@ -18,11 +28,15 @@ class StudentAttendanceController extends ChangeNotifier {
   int totalNumOfStudents = 0;
 
   // contrusctor
-  StudentAttendanceController({this.context}) {
+  StudentAttendanceController({this.context, this.studentControl}) {
     streamStudentsAttendanceData();
   }
 
+// Getters
   Map<String, dynamic> get getStudentsAttendance => _attendance;
+  Map<String, dynamic> get getStudentsFitteredAttendance => _filteredAttendance;
+  List get getStudents => _students;
+  List get getFilteredStudents => _filteredStudents;
 
   @override
   void dispose() {
@@ -36,12 +50,44 @@ class StudentAttendanceController extends ChangeNotifier {
         DateTime(now.year, now.month, now.day).millisecondsSinceEpoch;
 
     // Get student in the database
-    var _studentsSnap = await FirestoreDB.getAll('students');
-    var _students = _studentsSnap.docs.toList();
+    // var _studentsSnap = await FirestoreDB.getAll('students');
+    // var _students = _studentsSnap.docs.toList();
 
     // get the total number of students in the database
-    totalNumOfStudents = _students.length;
+    // totalNumOfStudents = _students.length;
 
+    _subscription1 =
+        FirebaseFirestore.instance.collection('students').snapshots().listen(
+      (_studentsSnap)
+      //  {
+      //   var _students = _studentsSnap.docs.toList();
+      //   totalNumOfStudents = _students.length;
+
+      //   startAttendanceStream(lastMidnight, _students);
+      //   notifyListeners();
+      // },
+      {
+        _filteredStudents = _students = _studentsSnap.docs.toList();
+        totalNumOfStudents = _students.length;
+
+        startAttendanceStream(lastMidnight, _students);
+
+        waiting = false;
+        notifyListeners();
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        hasError = true;
+        notifyListeners();
+      },
+      onDone: () {
+        done = true;
+        notifyListeners();
+      },
+    );
+  }
+
+  void startAttendanceStream(
+      int lastMidnight, List<QueryDocumentSnapshot> _students) {
     _subscription = FirebaseFirestore.instance
         .collection(collectionName)
         .where('time', isGreaterThanOrEqualTo: lastMidnight)
@@ -81,7 +127,7 @@ class StudentAttendanceController extends ChangeNotifier {
     );
   }
 
-  void generateAttendanceLog(List<QueryDocumentSnapshot> _students,
+  void generateAttendanceLog(List<dynamic> _students,
       List<QueryDocumentSnapshot> _data, Map<String, dynamic> at) {
     /// Get the maximum number of iterations to be done
     /// Thisis done by comparing the lenght of the students list and the lenght
@@ -155,6 +201,40 @@ class StudentAttendanceController extends ChangeNotifier {
 
   void _unsubscribe(_subscription) {
     _subscription!.cancel();
+  }
+
+  searchStudent(String searchKey) {
+    _filteredStudents = _students.where((docSnapshot) {
+      // print(docSnapshot.data()['dateOfBirth'] is Timestamp);
+      // return false;
+      Student student = Student.fromMapObject(docSnapshot.data());
+      return student.fullName().toString().contains(searchKey.toLowerCase());
+    }).toList();
+    notifyListeners();
+  }
+
+  sortStudentList(String columnName, int index, bool sorted) {
+    sortColumnIndex = index;
+    if (sortAscending) {
+      sortAscending = false;
+      _filteredStudents.sort((a, b) {
+        Student farmer1 = Student.fromMapObject(a.data());
+        Student farmer2 = Student.fromMapObject(b.data());
+        return farmer1
+            .toMap()[columnName]
+            .compareTo(farmer2.toMap()[columnName]);
+      });
+    } else {
+      sortAscending = true;
+      _filteredStudents.sort((a, b) {
+        Student farmer1 = Student.fromMapObject(a.data());
+        Student farmer2 = Student.fromMapObject(b.data());
+        return farmer2
+            .toMap()[columnName]
+            .compareTo(farmer1.toMap()[columnName]);
+      });
+    }
+    notifyListeners();
   }
 
   // searchStudent(String searchKey) {

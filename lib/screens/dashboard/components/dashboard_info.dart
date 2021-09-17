@@ -1,5 +1,5 @@
 import 'package:clock_in_admin/components/shimmer_effect.dart';
-import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
+import 'package:clock_in_admin/controllers/teacher.controller.dart';
 import 'package:clock_in_admin/models/card_info.dart';
 import 'package:clock_in_admin/responsive.dart';
 import 'package:clock_in_admin/styles/styles.dart';
@@ -66,7 +66,7 @@ class DashboardInfoCardGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TeacherAttendanceController>(
+    return Consumer<TeacherController>(
       builder: (context, attendanceState, child) {
         if (attendanceState.hasError) {
           return Padding(

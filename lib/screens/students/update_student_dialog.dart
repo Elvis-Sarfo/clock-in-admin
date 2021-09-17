@@ -3,16 +3,13 @@ import 'package:clock_in_admin/components/gender_selector.dart';
 import 'package:clock_in_admin/components/image_chooser.dart';
 import 'package:clock_in_admin/components/main_button.dart';
 import 'package:clock_in_admin/components/type_ahead_input.dart';
-import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
 import 'package:clock_in_admin/models/guardian.dart';
 import 'package:clock_in_admin/models/student.dart';
 import 'package:clock_in_admin/responsive.dart';
-import 'package:clock_in_admin/services/auth_services.dart';
 import 'package:clock_in_admin/services/cities_services.dart';
 import 'package:clock_in_admin/services/database_services.dart';
 import 'package:clock_in_admin/services/department_services.dart';
 import 'package:clock_in_admin/services/positions_services.dart';
-import 'package:clock_in_admin/services/subject_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:clock_in_admin/utils/form_validator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -437,7 +434,7 @@ class _UpdateStudentDialogState extends State<UpdateStudentDialog> {
           // save the image in the firebase storage
           await uploadProfilePicture();
 
-          StudentAttendanceController().streamStudentsAttendanceData();
+          // StudentAttendanceController().streamStudentsAttendanceData();
           Navigator.of(context).pop();
         } else {
           setState(() {

@@ -1,9 +1,7 @@
 import 'package:clock_in_admin/controllers/menu.controller.dart';
 import 'package:clock_in_admin/controllers/page_route.controller.dart';
 import 'package:clock_in_admin/controllers/student.controller.dart';
-import 'package:clock_in_admin/controllers/student_attendance.controller.dart';
 import 'package:clock_in_admin/controllers/teacher.controller.dart';
-import 'package:clock_in_admin/controllers/teacher_attendance.controller.dart';
 import 'package:clock_in_admin/screens/auth/login/login.dart';
 import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';
@@ -25,15 +23,15 @@ void main() {
         ChangeNotifierProvider<TeacherController>(
           create: (context) => TeacherController(),
         ),
-        ChangeNotifierProvider<TeacherAttendanceController>(
-          create: (context) => TeacherAttendanceController(context: context),
-        ),
+        // ChangeNotifierProvider<TeacherAttendanceController>(
+        //   create: (context) => TeacherAttendanceController(context: context),
+        // ),
         ChangeNotifierProvider<StudentController>(
           create: (context) => StudentController(),
         ),
-        ChangeNotifierProvider<StudentAttendanceController>(
-          create: (context) => StudentAttendanceController(context: context),
-        ),
+        // ChangeNotifierProvider<StudentAttendanceController>(
+        //   create: (context) => StudentAttendanceController(context: context),
+        // ),
       ],
       child: MyApp(),
     ),
@@ -47,12 +45,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Clockin Admin',
-      theme: ThemeData.dark().copyWith(
+      // theme: ThemeData.dark().copyWith(
+      //   scaffoldBackgroundColor: Styles.backgroundColor,
+      //   textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+      //       .apply(bodyColor: Colors.black87),
+      //   canvasColor: Styles.primaryColor,
+      //   cardTheme: CardTheme(color: Styles.secondaryColor),
+      // ),
+      theme: ThemeData(
         scaffoldBackgroundColor: Styles.backgroundColor,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-            .apply(bodyColor: Colors.black87),
-        canvasColor: Styles.primaryColor,
         cardTheme: CardTheme(color: Styles.secondaryColor),
+        canvasColor: Styles.primaryColor,
+        primaryColor: Styles.primaryColor,
+        primaryColorDark: Styles.primaryColor,
+        backgroundColor: Styles.primaryColor,
+        buttonTheme: ButtonThemeData(
+          buttonColor: Styles.primaryColor,
+        ),
       ),
       home: FirebaseAuth.instance.currentUser == null ? Login() : MainScreen(),
     );

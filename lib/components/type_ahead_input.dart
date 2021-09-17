@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:clock_in_admin/services/cities_services.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
