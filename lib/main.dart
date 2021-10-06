@@ -7,7 +7,6 @@ import 'package:clock_in_admin/screens/main/main_screen.dart';
 import 'package:clock_in_admin/styles/styles.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 void main() {
